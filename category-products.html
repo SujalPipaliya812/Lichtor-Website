@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="LICHTOR Indoor LED Lighting Products - Panel Lights, Surface Lights, Down Lights, COB Lights, and more.">
+    <title>Indoor Lighting Products | LICHTOR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230066CC' width='100' height='100' rx='20'/%3E%3Cpath fill='white' d='M50 20L30 50h15v30h10V50h15z'/%3E%3C/svg%3E">
+    <style>
+        .category-banner {
+            background: linear-gradient(135deg, #0066CC 0%, #004C99 100%);
+            padding: calc(var(--header-height) + var(--space-12)) 0 var(--space-12);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 60%;
+            height: 200%;
+            background: radial-gradient(ellipse, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+        }
+
+        .category-banner h1 {
+            color: var(--white);
+            font-size: var(--text-4xl);
+            margin-bottom: var(--space-4);
+        }
+
+        .category-banner p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--text-lg);
+            line-height: 1.7;
+            max-width: 600px;
+        }
+
+        .products-empty {
+            text-align: center;
+            padding: var(--space-16) var(--space-4);
+            background: var(--off-white);
+            border-radius: var(--radius-xl);
+        }
+
+        .products-empty svg {
+            width: 80px;
+            height: 80px;
+            fill: var(--light-gray);
+            margin-bottom: var(--space-4);
+        }
+
+        .products-empty h3 {
+            color: var(--gray);
+            margin-bottom: var(--space-2);
+        }
+
+        .products-empty p {
+            color: var(--gray);
+            font-size: var(--text-sm);
+        }
+
+        .product-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--light-gray);
+            transition: all var(--transition-base);
+            text-decoration: none;
+            display: block;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .product-card-img {
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #f8f9fa, #e8f4fc);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--space-4);
+            transition: transform var(--transition-slow);
+        }
+
+        .product-card:hover .product-card-img img {
+            transform: scale(1.05);
+        }
+
+        .product-card-body {
+            padding: var(--space-5);
+        }
+
+        .product-card-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--dark);
+            margin-bottom: var(--space-2);
+        }
+
+        .product-card-desc {
+            font-size: var(--text-sm);
+            color: var(--gray);
+            margin-bottom: var(--space-4);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--light-gray);
+        }
+
+        .product-card-specs {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .product-card-spec {
+            font-size: 11px;
+            color: var(--primary);
+            background: rgba(0, 102, 204, 0.1);
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-weight: var(--font-medium);
+        }
+
+        .product-card-arrow {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 168, 107, 0.1));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .product-card:hover .product-card-arrow {
+            background: var(--primary-gradient);
+        }
+
+        .product-card-arrow svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+            transition: fill var(--transition-fast);
+        }
+
+        .product-card:hover .product-card-arrow svg {
+            fill: var(--white);
+        }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-16);
+        }
+
+        .loading-spinner::after {
+            content: '';
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--light-gray);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="homepage.html" class="logo">
+                    <img src="Lichtor-01.png" alt="LICHTOR" style="height: 55px; width: auto;">
+                </a>
+                <nav class="nav">
+                    <a href="categories.html" class="nav-link active">Categories</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="customer-care.html" class="nav-link">Customer Care</a>
+                    <a href="investors.html" class="nav-link">Investors</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link">More</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="#" class="nav-dropdown-item">Downloads</a>
+                            <a href="#" class="nav-dropdown-item">Certifications</a>
+                            <a href="#" class="nav-dropdown-item">Media Center</a>
+                            <a href="#" class="nav-dropdown-item">Careers</a>
+                        </div>
+                    </div>
+                </nav>
+                <div class="header-actions">
+                    <a href="customer-care.html" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Banner -->
+    <section class="category-banner">
+        <div class="container">
+            <nav class="breadcrumb" style="justify-content: flex-start; margin-bottom: var(--space-4);">
+                <a href="homepage.html" style="color: rgba(255,255,255,0.7);">Home</a>
+                <span class="breadcrumb-separator" style="color: rgba(255,255,255,0.5);">/</span>
+                <a href="categories.html" style="color: rgba(255,255,255,0.7);">Categories</a>
+                <span class="breadcrumb-separator" style="color: rgba(255,255,255,0.5);">/</span>
+                <span style="color: white;" id="category-name">Indoor Lighting</span>
+            </nav>
+            <h1 id="page-title">Indoor Lighting Products</h1>
+            <p id="page-description">Explore our premium range of indoor LED lighting solutions. Perfect for homes,
+                offices, and commercial spaces.</p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header" style="text-align: left; max-width: none; margin-bottom: var(--space-8);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
+                    <div>
+                        <h2 class="heading-3">Products</h2>
+                        <p style="color: var(--gray);" id="products-count">Loading products...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="products-container">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Need Help Choosing the Right Product?</h2>
+                <p class="cta-description">Contact our lighting experts for personalized recommendations based on your
+                    space and requirements.</p>
+                <div class="cta-actions">
+                    <a href="customer-care.html" class="btn btn-white btn-lg">Contact Expert</a>
+                    <a href="#" class="btn btn-outline-white btn-lg">Download Catalog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"></footer>
+
+    <!-- Footer Script -->
+    <script src="js/footer.js"></script>
+    <!-- API Script -->
+    <script src="js/api.js"></script>
+    <script>
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
+
+        // Get category from URL parameter or default to indoor-lighting
+        const urlParams = new URLSearchParams(window.location.search);
+        const categorySlug = urlParams.get('category') || 'indoor-lighting';
+
+        // Category display names
+        const categoryInfo = {
+            'indoor-lighting': {
+                name: 'Indoor Lighting',
+                title: 'Indoor Lighting Products',
+                description: 'Explore our premium range of indoor LED lighting solutions. Perfect for homes, offices, and commercial spaces.'
+            },
+            'outdoor-lighting': {
+                name: 'Outdoor Lighting',
+                title: 'Outdoor Lighting Products',
+                description: 'Weather-resistant LED lighting for exteriors, gardens, pathways, and outdoor areas.'
+            },
+            'commercial-lighting': {
+                name: 'Commercial Lighting',
+                title: 'Commercial Lighting Products',
+                description: 'LED solutions for offices, retail stores, and commercial spaces requiring efficient illumination.'
+            },
+            'industrial-lighting': {
+                name: 'Industrial Lighting',
+                title: 'Industrial Lighting Products',
+                description: 'Heavy-duty LED lights for factories, warehouses, and industrial facilities.'
+            },
+            'accessories': {
+                name: 'Accessories',
+                title: 'LED Accessories & Drivers',
+                description: 'LED drivers, controllers, connectors, and mounting accessories for complete lighting solutions.'
+            }
+        };
+
+        // Update page header
+        const info = categoryInfo[categorySlug] || categoryInfo['indoor-lighting'];
+        document.getElementById('category-name').textContent = info.name;
+        document.getElementById('page-title').textContent = info.title;
+        document.getElementById('page-description').textContent = info.description;
+        document.title = `${info.name} | LICHTOR`;
+
+        // Load products
+        async function loadProducts() {
+            const container = document.getElementById('products-container');
+            const countDisplay = document.getElementById('products-count');
+
+            try {
+                // Get all products and categories from admin panel
+                const [allProducts, categories] = await Promise.all([
+                    LICHTOR_API.getProducts(),
+                    LICHTOR_API.getCategories()
+                ]);
+
+                // Find the category
+                const targetCategory = categories.find(c => c.slug === categorySlug);
+
+                if (!targetCategory) {
+                    container.innerHTML = `
+                        <div class="products-empty">
+                            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+                            <h3>Category Not Found</h3>
+                            <p>This category doesn't exist in the admin panel yet.</p>
+                        </div>
+                    `;
+                    countDisplay.textContent = 'Category not configured';
+                    return;
+                }
+
+                // Filter products by category
+                const filteredProducts = allProducts.filter(product => {
+                    const productCatId = product.category?._id || product.category;
+                    return productCatId === targetCategory._id;
+                });
+
+                if (filteredProducts.length === 0) {
+                    container.innerHTML = `
+                        <div class="products-empty">
+                            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+                            <h3>No Products Yet</h3>
+                            <p>Products added in the admin panel with "${info.name}" category will appear here.</p>
+                        </div>
+                    `;
+                    countDisplay.textContent = 'No products available';
+                    return;
+                }
+
+                // Render products
+                countDisplay.textContent = `Showing ${filteredProducts.length} product${filteredProducts.length !== 1 ? 's' : ''}`;
+
+                container.innerHTML = `
+                    <div class="products-grid">
+                        ${filteredProducts.map(product => renderProductCard(product)).join('')}
+                    </div>
+                `;
+
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="products-empty">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        <h3>Connection Error</h3>
+                        <p>Unable to connect to the admin panel. Please ensure the API server is running.</p>
+                    </div>
+                `;
+                countDisplay.textContent = 'Error loading products';
+                console.error('API Error:', error);
+            }
+        }
+
+        function renderProductCard(product) {
+            const specs = product.specifications || {};
+            const features = [];
+            if (specs.wattage) features.push(`${specs.wattage}W`);
+            if (specs.colorTemperature) features.push(`${specs.colorTemperature}K`);
+            if (specs.ipRating) features.push(specs.ipRating.toUpperCase());
+
+            return `
+                <a href="product-detail.html?slug=${product.slug}" class="product-card">
+                    <div class="product-card-img">
+                        ${product.images?.[0]
+                    ? `<img src="${product.images[0]}" alt="${product.name}">`
+                    : `<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1">
+                                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                               </svg>`
+                }
+                    </div>
+                    <div class="product-card-body">
+                        <h3 class="product-card-title">${product.name}</h3>
+                        <p class="product-card-desc">${product.description || 'Premium LED lighting product'}</p>
+                        <div class="product-card-footer">
+                            <div class="product-card-specs">
+                                ${features.slice(0, 3).map(f => `<span class="product-card-spec">${f}</span>`).join('')}
+                            </div>
+                            <span class="product-card-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7" /></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+
+</html>

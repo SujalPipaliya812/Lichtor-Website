@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="LICHTOR LED Panel Lights - Ultra-slim recessed panels for false ceilings. High CRI, anti-glare, long life, surge protection.">
+    <title>LED Panel Lights | LICHTOR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230066CC' width='100' height='100' rx='20'/%3E%3Cpath fill='white' d='M50 20L30 50h15v30h10V50h15z'/%3E%3C/svg%3E">
+    <style>
+        /* Hero Banner - Full Width Image */
+        .hero-banner {
+            position: relative;
+            margin-top: var(--header-height);
+            overflow: hidden;
+        }
+
+        .hero-banner-image {
+            width: 100%;
+            display: block;
+        }
+
+        .hero-banner-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-breadcrumb {
+            background: rgba(255, 255, 255, 0.97);
+            padding: var(--space-3) var(--space-8);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-breadcrumb a,
+        .hero-breadcrumb span {
+            color: var(--gray);
+            font-size: var(--text-sm);
+            text-decoration: none;
+        }
+
+        .hero-breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .hero-breadcrumb .current {
+            color: var(--dark);
+            font-weight: var(--font-semibold);
+        }
+
+        /* Legacy category-banner kept for fallback */
+        .category-banner {
+            display: none;
+        }
+
+        .category-intro {
+            background: var(--off-white);
+            padding: var(--space-10) 0;
+        }
+
+        .intro-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-8);
+            align-items: center;
+        }
+
+        .intro-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .intro-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .intro-feature svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .intro-feature span {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--dark);
+        }
+
+        .variant-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--light-gray);
+            transition: all var(--transition-base);
+        }
+
+        .variant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .variant-card-img {
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #f8f9fa, #e8f4fc);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .variant-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--space-4);
+            transition: transform var(--transition-slow);
+        }
+
+        .variant-card:hover .variant-card-img img {
+            transform: scale(1.05);
+        }
+
+        .variant-card-body {
+            padding: var(--space-5);
+        }
+
+        .variant-card-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--dark);
+            margin-bottom: var(--space-3);
+        }
+
+        .variant-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .variant-feature {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.08), rgba(0, 168, 107, 0.08));
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+
+        .variant-feature svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--secondary);
+        }
+
+        .variant-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+        }
+
+        .variant-spec {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .variant-spec-label {
+            color: var(--gray);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .variant-spec-value {
+            color: var(--dark);
+            font-weight: var(--font-medium);
+        }
+
+        .variant-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--light-gray);
+        }
+
+        @media (max-width: 768px) {
+
+            .category-banner-content,
+            .intro-content {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="homepage.html" class="logo">
+                    <img src="Lichtor-01.png" alt="LICHTOR" style="height: 55px; width: auto;">
+                </a>
+                <nav class="nav">
+                    <a href="categories.html" class="nav-link active">Categories</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="customer-care.html" class="nav-link">Customer Care</a>
+                    <a href="investors.html" class="nav-link">Investors</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link">More</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="#" class="nav-dropdown-item">Downloads</a>
+                            <a href="#" class="nav-dropdown-item">Certifications</a>
+                            <a href="#" class="nav-dropdown-item">Media Center</a>
+                            <a href="#" class="nav-dropdown-item">Careers</a>
+                        </div>
+                    </div>
+                </nav>
+                <div class="header-actions">
+                    <a href="customer-care.html" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner - Full Width Image -->
+    <section class="hero-banner">
+        <div class="hero-banner-image">
+            <img src="Premium LED lighting for every space.png"
+                alt="Bright Ideas. Brilliant Lighting. - LICHTOR LED Lighting Solutions">
+        </div>
+        <div class="hero-breadcrumb">
+            <a href="homepage.html">Home</a>
+            <span> › </span>
+            <span class="current">LED Panel Lights</span>
+        </div>
+    </section>
+
+    <!-- Category Intro -->
+    <section class="category-intro">
+        <div class="container">
+            <div class="intro-content">
+                <div>
+                    <h2 class="heading-3" style="margin-bottom: var(--space-4);">Why Choose LICHTOR Panel Lights?</h2>
+                    <p style="color: var(--gray); line-height: 1.8;">LICHTOR LED Panel Lights offer superior
+                        illumination with industry-leading efficiency. Our panels feature high Color Rendering Index
+                        (CRI >80) for true color representation, anti-glare diffusers for eye comfort, and robust surge
+                        protection for reliable performance. With 50,000+ hours lifespan and 3-year warranty, they're
+                        the smart choice for every space.</p>
+                </div>
+                <div class="intro-features">
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M8 12l2 2 4-4" fill="none" stroke="white" stroke-width="2" />
+                        </svg>
+                        <span>High CRI >80</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2L4 12h6v10h4V12h6L12 2z" />
+                        </svg>
+                        <span>Anti-Glare</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" fill="none" stroke="white" stroke-width="2" />
+                        </svg>
+                        <span>50,000 Hrs Life</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                        <span>Surge Protection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Variants -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header" style="text-align: left; max-width: none; margin-bottom: var(--space-8);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
+                    <div>
+                        <h2 class="heading-3">Product Range</h2>
+                        <p style="color: var(--gray);">Showing 8 panel light variants</p>
+                    </div>
+                    <div style="display: flex; gap: var(--space-4); align-items: center;">
+                        <select class="form-select" style="width: auto;">
+                            <option>All Shapes</option>
+                            <option>Round</option>
+                            <option>Square</option>
+                        </select>
+                        <select class="form-select" style="width: auto;">
+                            <option>All Wattages</option>
+                            <option>3W - 9W</option>
+                            <option>12W - 18W</option>
+                            <option>22W - 30W</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-grid">
+                <!-- SSK Panel Light -->
+                <a href="product-ssk-panel.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop"
+                            alt="SSK Panel Light">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">SSK Panel Light</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Anti-Glare</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>2.5KV Surge</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">3W, 6W, 9W, 12W, 15W, 18W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round / Square</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">3K, 4K, 6K, 3-in-1</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Polycarbonate</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">6
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Moon Surface Panel -->
+                <a href="product-moon-surface.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&h=300&fit=crop"
+                            alt="Moon Surface Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Moon Surface Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Anti-Glare</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                                </svg>Surface Mount</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">6W, 12W, 18W, 24W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round / Square</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">3K, 4K, 6K</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Aluminium + PC</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">4
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Edge Lite Panel -->
+                <a href="product-edge-lite.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&h=300&fit=crop"
+                            alt="Edge Lite Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Edge Lite Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>Flicker Free</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <rect x="2" y="8" width="20" height="8" rx="1" />
+                                </svg>Ultra Slim</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">6W, 12W, 18W, 22W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round / Square</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">4K, 6K</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Die-Cast Aluminium</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">4
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Glaze Pro Panel -->
+                <a href="product-glaze-pro.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=300&fit=crop"
+                            alt="Glaze Pro Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Glaze Pro Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>CRI >90</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Anti-Glare</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg>Premium</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">9W, 12W, 15W, 18W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">3K, 4K, 6K, 3-in-1</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Aluminium</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">4
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Star Dura Panel -->
+                <a href="product-star-dura.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+                            alt="Star Dura Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Star Dura Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>4KV Surge</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                </svg>Durable</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">3W, 6W, 9W, 12W, 18W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round / Square</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">6K</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Polycarbonate</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">5
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Trio CCT Panel -->
+                <a href="product-trio-cct.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop"
+                            alt="Trio CCT Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Trio CCT Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>3-in-1 CCT</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Remote Switch</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>Smart</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">12W, 15W, 18W, 22W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Round / Square</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">3K + 4K + 6K (Switchable)</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Aluminium + PC</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">4
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Square 2x2 Panel -->
+                <a href="product-square-2x2.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop"
+                            alt="Square 2x2 Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Square 2x2 Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <rect x="3" y="3" width="18" height="18" />
+                                </svg>Grid Ceiling</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
+                                </svg>Commercial</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">36W, 40W, 45W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Square (2ft x 2ft)</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">4K, 6K</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Aluminium Frame</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">3
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Backlit Panel -->
+                <a href="product-backlit-panel.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop"
+                            alt="Backlit Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Backlit Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>Uniform Light</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>No Dark Spots</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>High Efficiency</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">30W, 36W, 40W, 50W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Shape</span>
+                                <span class="variant-spec-value">Square (1x1, 2x2)</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">CCT Options</span>
+                                <span class="variant-spec-value">4K, 6K</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Body</span>
+                                <span class="variant-spec-value">Aluminium + PMMA</span>
+                            </div>
+                        </div>
+                        <div class="variant-card-footer">
+                            <span
+                                style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">4
+                                Wattage Options</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16"
+                                    fill="var(--primary)">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Applications -->
+    <section class="section" style="background: var(--off-white);">
+        <div class="container">
+            <div class="section-header">
+                <span class="badge">Applications</span>
+                <h2 class="heading-3">Where to Use LED Panel Lights</h2>
+            </div>
+            <div class="applications-grid">
+                <div class="application-card">
+                    <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop"
+                        alt="Home">
+                    <div class="application-overlay">
+                        <h3 class="application-title">Home</h3>
+                        <p class="application-description">Living rooms, bedrooms, kitchens</p>
+                    </div>
+                </div>
+                <div class="application-card">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop"
+                        alt="Office">
+                    <div class="application-overlay">
+                        <h3 class="application-title">Office</h3>
+                        <p class="application-description">Workspaces, conference rooms, lobbies</p>
+                    </div>
+                </div>
+                <div class="application-card">
+                    <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=400&h=300&fit=crop"
+                        alt="Commercial">
+                    <div class="application-overlay">
+                        <h3 class="application-title">Commercial</h3>
+                        <p class="application-description">Retail, hotels, hospitals, schools</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Need Help Choosing the Right Panel Light?</h2>
+                <p class="cta-description">Contact our lighting experts for personalized recommendations based on your
+                    space and requirements.</p>
+                <div class="cta-actions">
+                    <a href="customer-care.html" class="btn btn-white btn-lg">Contact Expert</a>
+                    <a href="#" class="btn btn-outline-white btn-lg">Download Catalog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dynamic Products from Admin Panel -->
+    <section class="section" id="admin-products-section" style="display: none;">
+        <div class="container">
+            <div class="section-header" style="text-align: left; max-width: none; margin-bottom: var(--space-8);">
+                <h2 class="heading-3">Products from Admin Panel</h2>
+                <p style="color: var(--gray);">Products added via the admin panel appear here</p>
+            </div>
+            <div class="products-grid" id="dynamic-products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"></footer>
+
+    <!-- Footer Script -->
+    <script src="js/footer.js"></script>
+    <!-- API Script -->
+    <script src="js/api.js"></script>
+    <script>
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
+
+        // This page shows INDOOR category products
+        const PAGE_CATEGORY = 'indoor-lighting';
+
+        // Load products from admin panel and insert into main Product Range grid
+        async function loadDynamicProducts() {
+            try {
+                // Get all products and categories from admin panel
+                const [allProducts, categories] = await Promise.all([
+                    LICHTOR_API.getProducts(),
+                    LICHTOR_API.getCategories()
+                ]);
+
+                if (allProducts.length === 0) {
+                    console.log('No products from admin panel yet');
+                    return;
+                }
+
+                // Find the category ID for this page's category
+                const targetCategory = categories.find(c => c.slug === PAGE_CATEGORY);
+                if (!targetCategory) {
+                    console.log(`Category "${PAGE_CATEGORY}" not found in admin`);
+                    return;
+                }
+
+                // Filter products that belong to this category
+                const filteredProducts = allProducts.filter(product => {
+                    const productCatId = product.category?._id || product.category;
+                    return productCatId === targetCategory._id;
+                });
+
+                if (filteredProducts.length === 0) {
+                    console.log(`No products in "${PAGE_CATEGORY}" category yet`);
+                    return;
+                }
+
+                // Get the main products grid
+                const productsGrid = document.querySelector('.products-grid');
+                if (!productsGrid) return;
+
+                // Create product cards for admin products
+                const adminProductsHTML = filteredProducts.map(product => renderDynamicProductCard(product)).join('');
+
+                // Insert admin products at the beginning of the grid
+                productsGrid.insertAdjacentHTML('afterbegin', adminProductsHTML);
+
+                // Update the product count display
+                const countDisplay = document.querySelector('.section-header p[style*="color: var(--gray)"]');
+                if (countDisplay) {
+                    const staticProducts = 8; // Original static products
+                    const totalProducts = staticProducts + filteredProducts.length;
+                    countDisplay.textContent = `Showing ${totalProducts} panel light variants (${filteredProducts.length} from admin)`;
+                }
+
+                console.log(`Added ${filteredProducts.length} products from Indoor Lighting category`);
+
+            } catch (error) {
+                console.log('API not available:', error.message);
+            }
+        }
+
+        function renderDynamicProductCard(product) {
+            const specs = product.specifications || {};
+            const categoryName = product.category?.name || 'General';
+
+            // Build features array
+            const features = [];
+            if (specs.cri) features.push(`CRI ${specs.cri}`);
+            if (specs.wattage) features.push(`${specs.wattage}W`);
+            if (specs.colorTemperature) features.push(`${specs.colorTemperature}K`);
+            if (specs.ipRating) features.push(specs.ipRating.toUpperCase());
+
+            return `
+                <a href="product-detail.html?slug=${product.slug}" class="variant-card" style="position: relative;">
+                    <div class="variant-card-img">
+                        <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; z-index: 5;">ADMIN</span>
+                        ${product.images?.[0]
+                    ? `<img src="${product.images[0]}" alt="${product.name}">`
+                    : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #f0f7ff, #e8f4fc);">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#0066CC" stroke-width="1" opacity="0.4">
+                                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                </svg>
+                               </div>`
+                }
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">${product.name}</h3>
+                        <div class="variant-features">
+                            ${features.slice(0, 3).map(f => `<span class="variant-feature">${f}</span>`).join('')}
+                        </div>
+                        <div class="variant-specs">
+                            ${specs.wattage ? `<div class="variant-spec"><span class="variant-spec-label">Wattage</span><span class="variant-spec-value">${specs.wattage}W</span></div>` : ''}
+                            ${specs.voltage ? `<div class="variant-spec"><span class="variant-spec-label">Voltage</span><span class="variant-spec-value">${specs.voltage}V</span></div>` : ''}
+                            ${specs.lumens ? `<div class="variant-spec"><span class="variant-spec-label">Lumens</span><span class="variant-spec-value">${specs.lumens}</span></div>` : ''}
+                            ${specs.material ? `<div class="variant-spec"><span class="variant-spec-label">Body</span><span class="variant-spec-value">${specs.material}</span></div>` : ''}
+                        </div>
+                        <div class="variant-card-footer">
+                            <span style="font-size: var(--text-sm); color: var(--primary); font-weight: var(--font-semibold);">View Details</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24" width="16" height="16" fill="var(--primary)"><path d="M5 12h14m-7-7l7 7-7 7" /></svg></span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Load dynamic products on page load
+        document.addEventListener('DOMContentLoaded', loadDynamicProducts);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,259 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5001/api';
+
+export default function Categories() {
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showModal, setShowModal] = useState(false);
+    const [formData, setFormData] = useState({ name: '', description: '', isActive: true, bannerImage: '' });
+    const [editingId, setEditingId] = useState(null);
+    const [uploading, setUploading] = useState(false);
+
+    const token = localStorage.getItem('token');
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/categories`, config);
+            setCategories(res.data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', 'categories');
+
+        setUploading(true);
+        try {
+            const res = await axios.post(`${API_URL}/media/upload`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            setFormData(prev => ({ ...prev, bannerImage: res.data.url }));
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('Image upload failed');
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingId) {
+                await axios.put(`${API_URL}/categories/${editingId}`, formData, config);
+            } else {
+                await axios.post(`${API_URL}/categories`, formData, config);
+            }
+            fetchCategories();
+            setShowModal(false);
+            resetForm();
+        } catch (error) {
+            console.error('Error saving category:', error);
+            alert('Failed to save category');
+        }
+    };
+
+    const resetForm = () => {
+        setFormData({ name: '', description: '', isActive: true, bannerImage: '' });
+        setEditingId(null);
+    };
+
+    const handleEdit = (category) => {
+        setFormData({
+            name: category.name,
+            description: category.description,
+            isActive: category.isActive,
+            bannerImage: category.bannerImage || ''
+        });
+        setEditingId(category._id);
+        setShowModal(true);
+    };
+
+    const handleDelete = async (id) => {
+        if (window.confirm('Are you sure you want to delete this category?')) {
+            try {
+                await axios.delete(`${API_URL}/categories/${id}`, config);
+                fetchCategories();
+            } catch (error) {
+                console.error('Error deleting category:', error);
+                alert('Failed to delete category');
+            }
+        }
+    };
+
+    return (
+        <div className="page-container">
+            <div className="page-header">
+                <div>
+                    <h1 className="page-title">Categories</h1>
+                    <p className="text-gray">Manage your product categories</p>
+                </div>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                        resetForm();
+                        setShowModal(true);
+                    }}
+                >
+                    + Add Category
+                </button>
+            </div>
+
+            <div className="card">
+                <div className="table-responsive">
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr><td colSpan="5" className="text-center">Loading...</td></tr>
+                            ) : categories.length === 0 ? (
+                                <tr><td colSpan="5" className="text-center">No categories found</td></tr>
+                            ) : (
+                                categories.map(cat => (
+                                    <tr key={cat._id}>
+                                        <td>
+                                            {cat.bannerImage ? (
+                                                <img
+                                                    src={`http://localhost:5001${cat.bannerImage}`}
+                                                    alt={cat.name}
+                                                    style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
+                                                />
+                                            ) : (
+                                                <div style={{ width: '40px', height: '40px', background: '#f3f4f6', borderRadius: '4px' }} />
+                                            )}
+                                        </td>
+                                        <td>
+                                            <div style={{ fontWeight: 500 }}>{cat.name}</div>
+                                            <div style={{ fontSize: '12px', color: '#6b7280' }}>/{cat.slug}</div>
+                                        </td>
+                                        <td>{cat.description || '-'}</td>
+                                        <td>
+                                            <span className={`status-badge ${cat.isActive ? 'active' : 'inactive'}`}>
+                                                {cat.isActive ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className="btn-icon"
+                                                onClick={() => handleEdit(cat)}
+                                                title="Edit"
+                                            >
+                                                ✏️
+                                            </button>
+                                            <button
+                                                className="btn-icon delete"
+                                                onClick={() => handleDelete(cat._id)}
+                                                title="Delete"
+                                                style={{ marginLeft: '8px' }}
+                                            >
+                                                🗑️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h3>{editingId ? 'Edit Category' : 'Add New Category'}</h3>
+                            <button className="btn-close" onClick={() => setShowModal(false)}>×</button>
+                        </div>
+                        <form onSubmit={handleSubmit}>
+                            <div className="modal-body">
+                                <div className="form-group">
+                                    <label className="form-label">Category Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-input"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Banner Image</label>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <input
+                                            type="file"
+                                            className="form-input"
+                                            onChange={handleFileChange}
+                                            accept="image/*"
+                                        />
+                                        {uploading && <span className="text-gray-500">Uploading...</span>}
+                                    </div>
+                                    {formData.bannerImage && (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <img
+                                                src={`http://localhost:5001${formData.bannerImage}`}
+                                                alt="Preview"
+                                                style={{ height: '60px', borderRadius: '4px' }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Description</label>
+                                    <textarea
+                                        className="form-input"
+                                        rows="3"
+                                        value={formData.description}
+                                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Status</label>
+                                    <select
+                                        className="form-input"
+                                        value={formData.isActive ? 'true' : 'false'}
+                                        onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'true' })}
+                                    >
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary">Save Category</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

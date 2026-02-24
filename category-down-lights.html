@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="LICHTOR LED Down Lights - Recessed ceiling downlighters for uniform ambient lighting. Various wattages available.">
+    <title>LED Down Lights | LICHTOR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230066CC' width='100' height='100' rx='20'/%3E%3Cpath fill='white' d='M50 20L30 50h15v30h10V50h15z'/%3E%3C/svg%3E">
+    <style>
+        /* Hero Banner - Full Width Image */
+        .hero-banner {
+            position: relative;
+            margin-top: var(--header-height);
+            overflow: hidden;
+        }
+
+        .hero-banner-image {
+            width: 100%;
+            display: block;
+        }
+
+        .hero-banner-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-breadcrumb {
+            background: rgba(255, 255, 255, 0.97);
+            padding: var(--space-3) var(--space-8);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-breadcrumb a,
+        .hero-breadcrumb span {
+            color: var(--gray);
+            font-size: var(--text-sm);
+            text-decoration: none;
+        }
+
+        .hero-breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .hero-breadcrumb .current {
+            color: var(--dark);
+            font-weight: var(--font-semibold);
+        }
+
+        .category-intro {
+            background: var(--off-white);
+            padding: var(--space-10) 0;
+        }
+
+        .intro-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-8);
+            align-items: center;
+        }
+
+        .intro-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+        }
+
+        .intro-feature {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            padding: var(--space-4);
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .intro-feature svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .intro-feature span {
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            color: var(--dark);
+        }
+
+        .variant-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--light-gray);
+            transition: all var(--transition-base);
+            text-decoration: none;
+            display: block;
+        }
+
+        .variant-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .variant-card-img {
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, #f8f9fa, #e8f4fc);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .variant-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--space-4);
+            transition: transform var(--transition-slow);
+        }
+
+        .variant-card:hover .variant-card-img img {
+            transform: scale(1.05);
+        }
+
+        .variant-card-body {
+            padding: var(--space-5);
+        }
+
+        .variant-card-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--dark);
+            margin-bottom: var(--space-3);
+        }
+
+        .variant-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        .variant-feature {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.08), rgba(0, 168, 107, 0.08));
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: var(--font-medium);
+            color: var(--primary);
+        }
+
+        .variant-feature svg {
+            width: 12px;
+            height: 12px;
+            fill: var(--secondary);
+        }
+
+        .variant-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2);
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+        }
+
+        .variant-spec {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .variant-spec-label {
+            color: var(--gray);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .variant-spec-value {
+            color: var(--dark);
+            font-weight: var(--font-medium);
+        }
+
+        @media (max-width: 768px) {
+            .intro-content {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="homepage.html" class="logo">
+                    <img src="Lichtor-01.png" alt="LICHTOR" style="height: 55px; width: auto;">
+                </a>
+                <nav class="nav">
+                    <a href="categories.html" class="nav-link active">Categories</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="customer-care.html" class="nav-link">Customer Care</a>
+                    <a href="investors.html" class="nav-link">Investors</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link">More</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="#" class="nav-dropdown-item">Downloads</a>
+                            <a href="#" class="nav-dropdown-item">Certifications</a>
+                            <a href="#" class="nav-dropdown-item">Media Center</a>
+                            <a href="#" class="nav-dropdown-item">Careers</a>
+                        </div>
+                    </div>
+                </nav>
+                <div class="header-actions">
+                    <a href="customer-care.html" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner - Full Width Image -->
+    <section class="hero-banner">
+        <div class="hero-banner-image">
+            <img src="Premium LED lighting for every space.png"
+                alt="Bright Ideas. Brilliant Lighting. - LICHTOR LED Lighting Solutions">
+        </div>
+        <div class="hero-breadcrumb">
+            <a href="homepage.html">Home</a>
+            <span> › </span>
+            <span class="current">LED Down Lights</span>
+        </div>
+    </section>
+
+    <!-- Category Intro -->
+    <section class="category-intro">
+        <div class="container">
+            <div class="intro-content">
+                <div>
+                    <h2 class="heading-3" style="margin-bottom: var(--space-4);">Why Choose LICHTOR Down Lights?</h2>
+                    <p style="color: var(--gray); line-height: 1.8;">LICHTOR LED Down Lights deliver superior recessed
+                        lighting for modern interiors. Our downlighters feature precision-engineered reflectors for
+                        optimal light distribution, anti-glare optics for eye comfort, and slim profiles for easy
+                        ceiling integration. Perfect for homes, hotels, offices, and retail environments.</p>
+                </div>
+                <div class="intro-features">
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M8 12l2 2 4-4" fill="none" stroke="white" stroke-width="2" />
+                        </svg>
+                        <span>Easy Installation</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2L4 12h6v10h4V12h6L12 2z" />
+                        </svg>
+                        <span>Modern Design</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" fill="none" stroke="white" stroke-width="2" />
+                        </svg>
+                        <span>50,000 Hrs Life</span>
+                    </div>
+                    <div class="intro-feature">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                        <span>Surge Protection</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Variants -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header" style="text-align: left; max-width: none; margin-bottom: var(--space-8);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);">
+                    <div>
+                        <h2 class="heading-3">Product Range</h2>
+                        <p style="color: var(--gray);">Showing 6 surface light variants</p>
+                    </div>
+                    <div style="display: flex; gap: var(--space-4); align-items: center;">
+                        <select class="form-select" style="width: auto;">
+                            <option>All Shapes</option>
+                            <option>Round</option>
+                            <option>Square</option>
+                        </select>
+                        <select class="form-select" style="width: auto;">
+                            <option>All Wattages</option>
+                            <option>6W - 12W</option>
+                            <option>15W - 22W</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-grid">
+                <!-- Surface Round Light -->
+                <a href="product-detail.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=300&fit=crop"
+                            alt="Surface Round Light">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Surface Round Light</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Slim Design</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">6W - 22W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Color Temp</span>
+                                <span class="variant-spec-value">3000K - 6500K</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Surface Square Light -->
+                <a href="product-detail.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop"
+                            alt="Surface Square Light">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Surface Square Light</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>High CRI</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Modern Look</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">6W - 22W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Color Temp</span>
+                                <span class="variant-spec-value">3000K - 6500K</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Slim Surface Panel -->
+                <a href="product-detail.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+                            alt="Slim Surface Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Slim Surface Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>Ultra Slim</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9z" />
+                                </svg>2.5KV Surge</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">8W - 18W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Color Temp</span>
+                                <span class="variant-spec-value">4000K - 6500K</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Surface Rimless Panel -->
+                <a href="product-detail.html" class="variant-card">
+                    <div class="variant-card-img">
+                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&h=300&fit=crop"
+                            alt="Surface Rimless Panel">
+                    </div>
+                    <div class="variant-card-body">
+                        <h3 class="variant-card-title">Surface Rimless Panel</h3>
+                        <div class="variant-features">
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                </svg>Frameless</span>
+                            <span class="variant-feature"><svg viewBox="0 0 24 24">
+                                    <path d="M12 2L4 12h6v10h4V12h6z" />
+                                </svg>Premium Look</span>
+                        </div>
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Wattage</span>
+                                <span class="variant-spec-value">9W - 24W</span>
+                            </div>
+                            <div class="variant-spec">
+                                <span class="variant-spec-label">Color Temp</span>
+                                <span class="variant-spec-value">3000K - 6500K</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer"></footer>
+
+    <script src="js/footer.js"></script>
+    <script>
+        // Sticky header
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+        });
+    </script>
+</body>
+
+</html>

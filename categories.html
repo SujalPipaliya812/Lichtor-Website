@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Explore LICHTOR's LED lighting categories - Panel Lights, Surface Lights, Down Lights, COB Lights, Street Lights, Flood Lights, and more.">
+    <title>LED Lighting Categories | LICHTOR</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%230066CC' width='100' height='100' rx='20'/%3E%3Cpath fill='white' d='M50 20L30 50h15v30h10V50h15z'/%3E%3C/svg%3E">
+    <style>
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-10);
+            flex-wrap: wrap;
+            margin-top: var(--space-6);
+        }
+
+        .filter-tab {
+            padding: var(--space-3) var(--space-6);
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--gray);
+            background: var(--white);
+            border: 2px solid var(--light-gray);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .filter-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .category-card-new {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--light-gray);
+            transition: all var(--transition-base);
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .category-card-new:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary);
+        }
+
+        .category-card-new:hover .category-card-img img {
+            transform: scale(1.08);
+        }
+
+        .category-card-img {
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, var(--off-white) 0%, #e8f4fc 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .category-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: var(--space-6);
+            transition: transform var(--transition-slow);
+        }
+
+        .category-card-img .category-tag {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            padding: var(--space-1) var(--space-3);
+            background: var(--primary);
+            color: var(--white);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+        }
+
+        .category-card-body {
+            padding: var(--space-5);
+        }
+
+        .category-card-name {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--dark);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .category-card-name svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+        }
+
+        .category-card-desc {
+            font-size: var(--text-sm);
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: var(--space-4);
+        }
+
+        .category-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .category-card-count {
+            font-size: var(--text-sm);
+            color: var(--primary);
+            font-weight: var(--font-medium);
+        }
+
+        .category-card-arrow {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, rgba(0, 102, 204, 0.1), rgba(0, 168, 107, 0.1));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+        }
+
+        .category-card-new:hover .category-card-arrow {
+            background: var(--primary-gradient);
+        }
+
+        .category-card-arrow svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--primary);
+            transition: fill var(--transition-fast);
+        }
+
+        .category-card-new:hover .category-card-arrow svg {
+            fill: var(--white);
+        }
+
+        /* Hero Banner - Full Width Image */
+        .hero-banner {
+            position: relative;
+            margin-top: var(--header-height);
+            overflow: hidden;
+        }
+
+        .hero-banner-image {
+            width: 100%;
+            display: block;
+        }
+
+        .hero-banner-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-breadcrumb {
+            position: absolute;
+            bottom: var(--space-6);
+            left: var(--space-6);
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            font-size: var(--text-sm);
+            box-shadow: var(--shadow-md);
+        }
+
+        .hero-breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .hero-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .hero-breadcrumb .current {
+            color: var(--dark);
+            font-weight: var(--font-medium);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="homepage.html" class="logo">
+                    <img src="Lichtor-01.png" alt="LICHTOR" style="height: 55px; width: auto;">
+                </a>
+                <nav class="nav">
+                    <a href="categories.html" class="nav-link active">Categories</a>
+                    <a href="about.html" class="nav-link">About Us</a>
+                    <a href="customer-care.html" class="nav-link">Customer Care</a>
+                    <a href="investors.html" class="nav-link">Investors</a>
+                    <div class="nav-dropdown">
+                        <a href="#" class="nav-link">More</a>
+                        <div class="nav-dropdown-menu">
+                            <a href="#" class="nav-dropdown-item">Downloads</a>
+                            <a href="#" class="nav-dropdown-item">Certifications</a>
+                            <a href="#" class="nav-dropdown-item">Media Center</a>
+                            <a href="#" class="nav-dropdown-item">Careers</a>
+                        </div>
+                    </div>
+                </nav>
+                <div class="header-actions">
+                    <a href="customer-care.html" class="btn btn-primary">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner - Full Width Image -->
+    <section class="hero-banner">
+        <div class="hero-banner-image">
+            <img src="Premium LED lighting for every space.png"
+                alt="LICHTOR LED Lighting Categories - Premium LED lighting for every space"
+                title="LED Lighting Categories">
+        </div>
+        <div class="hero-breadcrumb">
+            <a href="homepage.html">Home</a>
+            <span> › </span>
+            <span class="current">Categories</span>
+        </div>
+    </section>
+
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <!-- Filter Tabs -->
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All Categories</button>
+                <button class="filter-tab" data-filter="indoor">Indoor</button>
+                <button class="filter-tab" data-filter="outdoor">Outdoor</button>
+                <button class="filter-tab" data-filter="commercial">Commercial</button>
+                <button class="filter-tab" data-filter="industrial">Industrial</button>
+                <button class="filter-tab" data-filter="accessories">Accessories</button>
+            </div>
+
+            <!-- Category Grid -->
+            <div class="category-grid">
+                <!-- LED Panel Lights -->
+                <a href="category-panel-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <span class="category-tag">Popular</span>
+                        <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop"
+                            alt="LED Panel Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                            </svg>
+                            LED Panel Lights
+                        </h3>
+                        <p class="category-card-desc">Ultra-slim recessed panels for false ceilings. Available in round,
+                            square & rectangular shapes.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">45+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Surface Lights -->
+                <a href="category-surface-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&h=300&fit=crop"
+                            alt="LED Surface Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="6" width="20" height="12" rx="2" />
+                            </svg>
+                            LED Surface Lights
+                        </h3>
+                        <p class="category-card-desc">Surface-mounted panels for ceilings without false ceiling. Easy
+                            installation, modern design.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">35+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Down Lights -->
+                <a href="category-down-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <span class="category-tag">Bestseller</span>
+                        <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&h=300&fit=crop"
+                            alt="LED Down Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="8" />
+                                <path d="M12 16v6" />
+                            </svg>
+                            LED Down Lights
+                        </h3>
+                        <p class="category-card-desc">Recessed ceiling downlighters for uniform ambient lighting.
+                            Various wattages available.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">60+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED COB Lights -->
+                <a href="category-cob-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=400&h=300&fit=crop"
+                            alt="LED COB Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <circle cx="12" cy="12" r="4" fill="white" />
+                            </svg>
+                            LED COB Lights
+                        </h3>
+                        <p class="category-card-desc">High-intensity Chip-on-Board lights for focused illumination.
+                            Ideal for accent lighting.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">40+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Junction Lights -->
+                <a href="category-junction-lights.html" class="category-card-new" data-category="indoor">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+                            alt="LED Junction Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="4" y="4" width="16" height="16" rx="2" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            LED Junction Lights
+                        </h3>
+                        <p class="category-card-desc">Quick-install junction box lights. Perfect for residential false
+                            ceiling applications.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">25+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Spot Lights -->
+                <a href="category-spot-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=400&h=300&fit=crop"
+                            alt="LED Spot Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="8" r="6" />
+                                <path d="M8 14l4 8 4-8" />
+                            </svg>
+                            LED Spot Lights
+                        </h3>
+                        <p class="category-card-desc">Directional spotlights for highlighting displays, artwork, and
+                            architectural features.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">50+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Bulkhead Lights -->
+                <a href="category-bulkhead-lights.html" class="category-card-new" data-category="outdoor industrial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&h=300&fit=crop"
+                            alt="LED Bulkhead Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="6" width="18" height="12" rx="6" />
+                            </svg>
+                            LED Bulkhead Lights
+                        </h3>
+                        <p class="category-card-desc">Weather-resistant wall/ceiling lights for outdoor corridors,
+                            stairways, and entrances.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">20+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Street Lights -->
+                <a href="category-street-lights.html" class="category-card-new" data-category="outdoor industrial">
+                    <div class="category-card-img">
+                        <span class="category-tag">New</span>
+                        <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=300&fit=crop"
+                            alt="LED Street Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2v4M4 12H2M6 6L4 4M18 6l2-2M22 12h-2" />
+                                <rect x="8" y="8" width="8" height="14" rx="1" />
+                            </svg>
+                            LED Street Lights
+                        </h3>
+                        <p class="category-card-desc">High-efficiency street lighting for roads, highways, and urban
+                            areas. IP65+ rated.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">30+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Flood Lights -->
+                <a href="category-flood-lights.html" class="category-card-new" data-category="outdoor industrial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=400&h=300&fit=crop"
+                            alt="LED Flood Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 4h16v12H4z" />
+                                <path d="M8 16l-4 4M16 16l4 4M12 16v6" />
+                            </svg>
+                            LED Flood Lights
+                        </h3>
+                        <p class="category-card-desc">Powerful area lighting for grounds, facades, sports facilities,
+                            and security applications.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">40+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Highbay Lights -->
+                <a href="category-highbay-lights.html" class="category-card-new" data-category="industrial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&h=300&fit=crop"
+                            alt="LED Highbay Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2L6 8h4v8H6l6 6 6-6h-4V8h4L12 2z" />
+                            </svg>
+                            LED Highbay Lights
+                        </h3>
+                        <p class="category-card-desc">Industrial-grade high bay lights for warehouses, factories, and
+                            large commercial spaces.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">35+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Strip Lights -->
+                <a href="category-strip-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <span class="category-tag">Popular</span>
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop"
+                            alt="LED Strip Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="10" width="20" height="4" rx="1" />
+                            </svg>
+                            LED Strip Lights
+                        </h3>
+                        <p class="category-card-desc">Flexible LED strips for cove lighting, under-cabinet, and
+                            decorative applications. RGB available.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">55+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Profile Lights -->
+                <a href="category-profile-lights.html" class="category-card-new" data-category="indoor commercial">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&h=300&fit=crop"
+                            alt="LED Profile Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="8" width="18" height="8" rx="1" />
+                                <path d="M6 8V4M18 8V4M6 16v4M18 16v4" />
+                            </svg>
+                            LED Profile Lights
+                        </h3>
+                        <p class="category-card-desc">Aluminum channel profiles for strip light installation. Surface,
+                            recessed & suspended options.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">30+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Rope Lights -->
+                <a href="category-rope-lights.html" class="category-card-new" data-category="indoor outdoor">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1532007668283-bd4904ba9e9b?w=400&h=300&fit=crop"
+                            alt="LED Rope Lights">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 12c0-4 4-4 8-4s8 0 8 4-4 4-8 4-8 0-8-4z" />
+                            </svg>
+                            LED Rope Lights
+                        </h3>
+                        <p class="category-card-desc">Decorative rope lights for festive, architectural, and landscape
+                            lighting applications.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">25+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- LED Strip SMPS / Drivers -->
+                <a href="category-smps-drivers.html" class="category-card-new" data-category="accessories">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=300&fit=crop"
+                            alt="LED Strip SMPS / Drivers">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="2" y="7" width="20" height="10" rx="2" />
+                                <path d="M6 7V5M10 7V4M14 7V5M18 7V4" />
+                            </svg>
+                            LED Strip SMPS / Drivers
+                        </h3>
+                        <p class="category-card-desc">Power supplies and drivers for LED strips. Various wattages from
+                            12V to 24V output.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">40+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Street Light Clamps & Accessories -->
+                <a href="category-accessories.html" class="category-card-new" data-category="accessories outdoor">
+                    <div class="category-card-img">
+                        <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a780?w=400&h=300&fit=crop"
+                            alt="Street Light Clamps & Accessories">
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+                            </svg>
+                            Street Light Clamps & Accessories
+                        </h3>
+                        <p class="category-card-desc">Mounting brackets, clamps, arms, and accessories for street light
+                            installation.</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count">15+ Products</span>
+                            <span class="category-card-arrow"><svg viewBox="0 0 24 24">
+                                    <path d="M5 12h14m-7-7l7 7-7 7" />
+                                </svg></span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="section stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">500<span>+</span></div>
+                    <div class="stat-label">Total Products</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">15</div>
+                    <div class="stat-label">Product Categories</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">BIS</div>
+                    <div class="stat-label">Certified Quality</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3<span>Yr</span></div>
+                    <div class="stat-label">Warranty</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Need Bulk Orders or Custom Solutions?</h2>
+                <p class="cta-description">Contact our sales team for dealer partnerships, project quotations, and
+                    customized LED solutions.</p>
+                <div class="cta-actions">
+                    <a href="customer-care.html" class="btn btn-white btn-lg">Contact Sales</a>
+                    <a href="#" class="btn btn-outline-white btn-lg">Download Full Catalog</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer"></footer>
+
+    <script src="js/footer.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        // Header scroll
+        const header = document.getElementById('header');
+        window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
+
+        // Map admin category slugs to filter data-category values
+        const categorySlugToFilter = {
+            'indoor-lighting': 'indoor',
+            'outdoor-lighting': 'outdoor',
+            'commercial-lighting': 'commercial',
+            'industrial-lighting': 'industrial',
+            'accessories': 'accessories'
+        };
+
+        // Filter tabs functionality
+        const filterTabs = document.querySelectorAll('.filter-tab');
+
+        function applyFilter(filter) {
+            const categoryCards = document.querySelectorAll('.category-card-new');
+            categoryCards.forEach(card => {
+                if (filter === 'all' || card.dataset.category.includes(filter)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                applyFilter(tab.dataset.filter);
+            });
+        });
+
+        // Load admin products and insert into the main grid
+        async function loadAdminProductsIntoGrid() {
+            try {
+                const [categories, products] = await Promise.all([
+                    LICHTOR_API.getCategories(),
+                    LICHTOR_API.getProducts()
+                ]);
+
+                if (products.length === 0) {
+                    console.log('No products from admin panel');
+                    return;
+                }
+
+                // Get the main category grid
+                const categoryGrid = document.querySelector('.category-grid');
+                if (!categoryGrid) return;
+
+                // Create a map of category ID to filter value
+                const categoryIdToFilter = {};
+                categories.forEach(cat => {
+                    categoryIdToFilter[cat._id] = categorySlugToFilter[cat.slug] || 'all';
+                });
+
+                // Create and insert product cards
+                products.forEach(product => {
+                    const productCatId = product.category?._id || product.category;
+                    const filterValue = categoryIdToFilter[productCatId] || 'indoor';
+
+                    const cardHTML = renderAdminProductCard(product, filterValue);
+                    categoryGrid.insertAdjacentHTML('afterbegin', cardHTML);
+                });
+
+                // Re-apply current filter to include new cards
+                const activeTab = document.querySelector('.filter-tab.active');
+                if (activeTab) {
+                    applyFilter(activeTab.dataset.filter);
+                }
+
+                console.log(`Added ${products.length} products from admin panel to main grid`);
+
+            } catch (error) {
+                console.log('Admin panel not available:', error.message);
+            }
+        }
+
+        function renderAdminProductCard(product, filterCategory) {
+            const specs = product.specifications || {};
+            const features = [];
+            if (specs.wattage) features.push(`${specs.wattage}W`);
+            if (specs.colorTemperature) features.push(`${specs.colorTemperature}K`);
+            if (specs.ipRating) features.push(specs.ipRating.toUpperCase());
+
+            return `
+                <a href="product-detail.html?slug=${product.slug}" class="category-card-new" data-category="${filterCategory}">
+                    <div class="category-card-img">
+                        <span class="category-tag" style="background: linear-gradient(135deg, #10b981, #059669);">From Admin</span>
+                        ${product.images?.[0]
+                    ? `<img src="${product.images[0]}" alt="${product.name}">`
+                    : `<div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #f0f7ff, #e8f4fc);">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#0066CC" stroke-width="1" opacity="0.4">
+                                    <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                </svg>
+                               </div>`
+                }
+                    </div>
+                    <div class="category-card-body">
+                        <h3 class="category-card-name">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" /></svg>
+                            ${product.name}
+                        </h3>
+                        <p class="category-card-desc">${product.description || 'Premium LED lighting product from admin panel'}</p>
+                        <div class="category-card-footer">
+                            <span class="category-card-count" style="color: #10b981;">
+                                ${features.length > 0 ? features.join(' • ') : 'View Details'}
+                            </span>
+                            <span class="category-card-arrow">
+                                <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7l7 7-7 7" /></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Load admin products on page load
+        document.addEventListener('DOMContentLoaded', loadAdminProductsIntoGrid);
+    </script>
+</body>
+
+</html>
