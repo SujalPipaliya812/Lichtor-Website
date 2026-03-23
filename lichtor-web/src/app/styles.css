@@ -3085,6 +3085,30 @@ h6 {
   transform: translateX(0);
 }
 
+/* Category Specific Search Styles */
+.category-result {
+  background: var(--off-white);
+  border-left: 4px solid var(--primary);
+}
+
+.category-result:hover {
+  background: rgba(0, 102, 204, 0.05);
+}
+
+.category-icon {
+  background: var(--primary) !important;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+}
+
+.category-result .search-item-title {
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
