@@ -8,6 +8,7 @@ import Enquiries from './pages/Enquiries';
 import Media from './pages/Media';
 import Pages from './pages/Pages';
 import Settings from './pages/Settings';
+import { AuthProvider } from './context/AuthContext';
 import './styles/admin.css';
 
 function isAuthenticated() {
@@ -23,27 +24,29 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={
-          <ProtectedRoute>
-            <Layout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="enquiries" element={<Enquiries />} />
-          <Route path="media" element={<Media />} />
-          <Route path="pages" element={<Pages />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+          <Route path="/" element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="enquiries" element={<Enquiries />} />
+            <Route path="media" element={<Media />} />
+            <Route path="pages" element={<Pages />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

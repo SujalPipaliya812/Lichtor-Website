@@ -6,16 +6,28 @@ const Category = require('../models/Category');
 // GET /api/products - Get all products (admin)
 router.get('/', async (req, res) => {
     try {
-        const { category, status, page = 1, limit = 20 } = req.query;
+        const { category, status, search, sort, page = 1, limit = 50 } = req.query;
 
         let query = {};
         if (category) query.category = category;
-        if (status) query.status = status;
+        if (status === 'active') query.isActive = true;
+        if (status === 'inactive') query.isActive = false;
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: 'i' } },
+                { sku: { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        let sortObj = { createdAt: -1 };
+        if (sort === 'name') sortObj = { name: 1 };
+        if (sort === 'category') sortObj = { category: 1, name: 1 };
+        if (sort === 'order') sortObj = { displayOrder: 1 };
 
         const total = await Product.countDocuments(query);
         const products = await Product.find(query)
             .populate('category', 'name slug')
-            .sort({ createdAt: -1 })
+            .sort(sortObj)
             .skip((page - 1) * limit)
             .limit(parseInt(limit));
 
@@ -30,29 +42,28 @@ router.get('/', async (req, res) => {
     }
 });
 
-// GET /api/products/stats/overview - Get product stats
+// GET /api/products/stats/overview
 router.get('/stats/overview', async (req, res) => {
     try {
         const total = await Product.countDocuments();
-        const active = await Product.countDocuments({ status: 'active' });
-        const inactive = await Product.countDocuments({ status: 'inactive' });
-
+        const active = await Product.countDocuments({ isActive: true });
+        const inactive = await Product.countDocuments({ isActive: false });
         res.json({ total, active, inactive });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
-// GET /api/products/:id - Get single product
+// GET /api/products/:id
 router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id)
-            .populate('category', 'name slug');
+            .populate('category', 'name slug')
+            .populate('similarProducts', 'name slug image category');
 
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-
         res.json(product);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -63,13 +74,15 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const {
-            name, category, description,
-            watt, cct, lumen,
-            features, applications, specifications,
-            isActive, image, datasheet
+            name, category, description, shortDescription, longDescription,
+            sku, watt, cct, lumen, pkg, wattTable, types,
+            features, applications, specifications, specCards,
+            bodyColors, colorOptions,
+            isActive, image, gallery, datasheet,
+            similarProducts, displayOrder,
+            metaTitle, metaDescription, descriptionTemplate
         } = req.body;
 
-        // Verify category exists
         const categoryExists = await Category.findById(category);
         if (!categoryExists) {
             return res.status(400).json({ message: 'Invalid category' });
@@ -77,18 +90,31 @@ router.post('/', async (req, res) => {
 
         const product = new Product({
             name, category, description,
+            shortDescription: shortDescription || '',
+            longDescription: longDescription || '',
+            sku: sku || '',
             watt, cct, lumen,
+            pkg: pkg || '',
+            wattTable: wattTable || [],
+            types: types || [],
             features: features || [],
             applications: applications || [],
             specifications: specifications || {},
+            specCards: specCards || [],
+            bodyColors: bodyColors || [],
+            colorOptions: colorOptions || [],
             isActive: isActive !== undefined ? isActive : true,
             image: image || '',
-            datasheet: datasheet || ''
+            gallery: gallery || [],
+            datasheet: datasheet || '',
+            similarProducts: similarProducts || [],
+            displayOrder: displayOrder || 0,
+            metaTitle: metaTitle || '',
+            metaDescription: metaDescription || '',
+            descriptionTemplate: descriptionTemplate || ''
         });
 
         await product.save();
-
-        // Populate category for response
         await product.populate('category', 'name slug');
 
         res.status(201).json(product);
@@ -103,44 +129,39 @@ router.post('/', async (req, res) => {
 // PUT /api/products/:id - Update product
 router.put('/:id', async (req, res) => {
     try {
-        const {
-            name, category, description,
-            watt, cct, lumen,
-            features, applications, specifications,
-            isActive, image, datasheet
-        } = req.body;
-
         const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        // Verify category if changed
-        if (category) {
-            const categoryExists = await Category.findById(category);
-            if (!categoryExists) {
-                return res.status(400).json({ message: 'Invalid category' });
+        const fields = [
+            'name', 'category', 'description', 'shortDescription', 'longDescription',
+            'sku', 'watt', 'cct', 'lumen', 'pkg', 'wattTable', 'types',
+            'features', 'applications', 'specCards',
+            'bodyColors', 'colorOptions',
+            'isActive', 'image', 'gallery', 'datasheet',
+            'similarProducts', 'displayOrder',
+            'metaTitle', 'metaDescription', 'descriptionTemplate'
+        ];
+
+        fields.forEach(field => {
+            if (req.body[field] !== undefined) {
+                product[field] = req.body[field];
             }
-            product.category = category;
+        });
+
+        // Handle specifications as merge
+        if (req.body.specifications) {
+            product.specifications = { ...product.specifications?.toObject?.() || {}, ...req.body.specifications };
         }
 
-        if (name) {
-            product.name = name;
-            product.slug = name
+        // Re-generate slug if name changed
+        if (req.body.name) {
+            product.slug = req.body.name
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/(^-|-$)/g, '');
         }
-        if (description !== undefined) product.description = description;
-        if (watt !== undefined) product.watt = watt;
-        if (cct !== undefined) product.cct = cct;
-        if (lumen !== undefined) product.lumen = lumen;
-        if (features) product.features = features;
-        if (applications) product.applications = applications;
-        if (specifications) product.specifications = { ...product.specifications, ...specifications };
-        if (isActive !== undefined) product.isActive = isActive;
-        if (image !== undefined) product.image = image;
-        if (datasheet !== undefined) product.datasheet = datasheet;
 
         await product.save();
         await product.populate('category', 'name slug');
@@ -151,7 +172,74 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE /api/products/:id - Delete product
+// POST /api/products/:id/duplicate - Duplicate product
+router.post('/:id/duplicate', async (req, res) => {
+    try {
+        const source = await Product.findById(req.params.id).lean();
+        if (!source) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        delete source._id;
+        delete source.__v;
+        source.name = source.name + ' (Copy)';
+        source.slug = source.slug + '-copy-' + Date.now();
+        source.createdAt = new Date();
+        source.updatedAt = new Date();
+
+        const duplicate = new Product(source);
+        await duplicate.save();
+        await duplicate.populate('category', 'name slug');
+
+        res.status(201).json(duplicate);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// POST /api/products/:id/generate-description - AI Description generate
+router.post('/:id/generate-description', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id).populate('category', 'name');
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        const categoryName = product.category?.name || 'LED';
+        const name = product.name;
+        const watt = product.watt || '';
+        const colors = (product.bodyColors || []).join(', ') || 'multiple color options';
+        const feats = (product.features || []).slice(0, 4).join(', ') || 'energy efficient, high performance';
+
+        const shortDescription = `${name} — a premium ${categoryName.toLowerCase()} LED lighting solution${watt ? ` with ${watt}W power output` : ''}. Available in ${colors}. Designed for superior brightness, energy efficiency, and long-lasting performance.`;
+
+        const longDescription = `Experience superior illumination with the ${name} from LICHTOR. This professional-grade ${categoryName.toLowerCase()} LED light${watt ? ` delivers powerful ${watt}W output` : ''} with exceptional energy efficiency and uniform lighting distribution. Built using premium quality materials and advanced LED technology, it provides reliable and long-lasting performance for residential, commercial, and industrial applications.
+
+Available in ${colors}, the ${name} offers versatile installation options with modern aesthetics that complement any space. Key highlights include ${feats}. With stable lighting output and enhanced durability, this product reduces maintenance costs while maintaining consistent brightness.
+
+LICHTOR LED products are engineered to meet the highest industry standards, ensuring safety, performance, and customer satisfaction. Illuminate your space with dependable lighting performance from LICHTOR.`;
+
+        const highlights = [
+            `Premium ${categoryName.toLowerCase()} LED with${watt ? ` ${watt}W` : ''} high-efficiency output`,
+            `Available in ${colors} to suit different environments`,
+            `Advanced LED technology for uniform brightness and long lifespan`,
+            `Easy installation with modern, space-efficient design`
+        ];
+
+        const metaDescription = `Buy ${name} from LICHTOR — premium ${categoryName.toLowerCase()} LED lighting${watt ? `, ${watt}W` : ''}. Energy efficient, long-lasting, available in ${colors}. Request a quote today.`;
+
+        res.json({
+            shortDescription,
+            longDescription,
+            highlights,
+            metaDescription
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// DELETE /api/products/:id
 router.delete('/:id', async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
@@ -164,17 +252,16 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// PATCH /api/products/:id/status - Toggle status
 router.patch('/:id/status', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
-
-        product.status = product.status === 'active' ? 'inactive' : 'active';
+        product.isActive = !product.isActive;
         await product.save();
         await product.populate('category', 'name slug');
-
         res.json(product);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

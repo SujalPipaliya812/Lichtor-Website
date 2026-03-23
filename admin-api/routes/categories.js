@@ -28,14 +28,15 @@ router.get('/:id', async (req, res) => {
 // POST /api/categories - Create category
 router.post('/', async (req, res) => {
     try {
-        const { name, description, isActive, order, bannerImage } = req.body;
+        const { name, description, isActive, order, bannerImage, applicationAreas } = req.body;
 
         const category = new Category({
             name,
             description,
             isActive: isActive !== undefined ? isActive : true,
             order: order || 0,
-            bannerImage: bannerImage || ''
+            bannerImage: bannerImage || '',
+            applicationAreas: applicationAreas || []
         });
 
         await category.save();
@@ -51,7 +52,7 @@ router.post('/', async (req, res) => {
 // PUT /api/categories/:id - Update category
 router.put('/:id', async (req, res) => {
     try {
-        const { name, description, isActive, order, bannerImage } = req.body;
+        const { name, description, isActive, order, bannerImage, applicationAreas } = req.body;
 
         const category = await Category.findById(req.params.id);
         if (!category) {
@@ -63,6 +64,7 @@ router.put('/:id', async (req, res) => {
         if (isActive !== undefined) category.isActive = isActive;
         if (order !== undefined) category.order = order;
         if (bannerImage !== undefined) category.bannerImage = bannerImage;
+        if (applicationAreas !== undefined) category.applicationAreas = applicationAreas;
 
         // Regenerate slug if name changed
         if (name) {

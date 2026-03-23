@@ -32,6 +32,21 @@ router.post('/register', protect, async (req, res) => {
     }
 });
 
+// @route   GET /api/auth/users
+// @desc    Get all users (admin only)
+// @access  Private/Admin
+router.get('/users', protect, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Only admins can view users' });
+        }
+        const users = await User.find().select('-password');
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // @route   POST /api/auth/login
 // @desc    Login user
 // @access  Public

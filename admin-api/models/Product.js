@@ -13,11 +13,25 @@ const ProductSchema = new mongoose.Schema({
         unique: true,
         lowercase: true
     },
+    sku: {
+        type: String,
+        default: '',
+        trim: true
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: [true, 'Category is required']
     },
+    shortDescription: {
+        type: String,
+        default: ''
+    },
+    longDescription: {
+        type: String,
+        default: ''
+    },
+    // Legacy field kept for backward compat
     description: {
         type: String,
         default: ''
@@ -28,12 +42,27 @@ const ProductSchema = new mongoose.Schema({
     applications: [{
         type: String
     }],
+    bodyColors: [{
+        type: String
+    }],
+    colorOptions: [{
+        type: String
+    }],
+    pkg: { type: String, default: '' },
     watt: { type: String, default: '' },
     cct: { type: String, default: '' },
     lumen: { type: String, default: '' },
+    wattTable: [{
+        watt: { type: String, default: '' },
+        lumen: { type: String, default: '' },
+        cct: { type: String, default: '' },
+        current: { type: String, default: '' }
+    }],
+    types: [{
+        name: { type: String, default: '' },
+        bodyColors: [{ type: String }]
+    }],
 
-    // Keeping specifications object for backward compatibility if needed, 
-    // but primary fields are now top-level as per spec.
     specifications: {
         voltage: { type: String, default: '' },
         cri: { type: String, default: '' },
@@ -44,18 +73,44 @@ const ProductSchema = new mongoose.Schema({
         material: { type: String, default: '' },
         warranty: { type: String, default: '' }
     },
+
+    // Specification display cards (icon + title + text)
+    specCards: [{
+        icon: { type: String, default: '' },
+        title: { type: String, default: '' },
+        text: { type: String, default: '' }
+    }],
+
     image: {
         type: String,
         default: ''
     },
+    gallery: [{
+        type: String
+    }],
     datasheet: {
         type: String,
         default: ''
     },
+
+    similarProducts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
+
+    displayOrder: {
+        type: Number,
+        default: 0
+    },
     isActive: {
         type: Boolean,
         default: true
-    }
+    },
+
+    metaTitle: { type: String, default: '' },
+    metaDescription: { type: String, default: '' },
+
+    descriptionTemplate: { type: String, default: '' }
 }, {
     timestamps: true
 });
@@ -71,7 +126,6 @@ ProductSchema.pre('validate', function (next) {
     next();
 });
 
-// Virtual for populating category details
 ProductSchema.virtual('categoryDetails', {
     ref: 'Category',
     localField: 'category',

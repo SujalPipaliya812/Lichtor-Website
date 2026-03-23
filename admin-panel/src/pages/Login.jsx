@@ -44,50 +44,51 @@ export default function Login() {
 
     return (
         <div className="login-page">
-            <div className="login-card">
+            <div className="login-container">
                 <div className="login-logo">
                     <img src="/Lichtor-01.png" alt="LICHTOR" />
                 </div>
+                <div className="login-card">
+                    <h1 className="login-title">Welcome Back</h1>
+                    <p className="login-subtitle">Sign in to LICHTOR Admin Panel</p>
 
-                <h1 className="login-title">Welcome Back</h1>
-                <p className="login-subtitle">Sign in to LICHTOR Admin Panel</p>
+                    {error && <div className="login-error">{error}</div>}
 
-                {error && <div className="login-error">{error}</div>}
+                    {/* Using a generic div wrapper prevents form submission issues */}
+                    <div className="login-form">
+                        <div className="form-group">
+                            <label className="form-label">Email Address</label>
+                            <input
+                                type="email"
+                                className="form-input"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                                placeholder="admin@lichtor.com"
+                            />
+                        </div>
 
-                {/* Using a generic div wrapper prevents form submission issues */}
-                <div className="login-form">
-                    <div className="form-group">
-                        <label className="form-label">Email Address</label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            placeholder="admin@lichtor.com"
-                        />
+                        <div className="form-group">
+                            <label className="form-label">Password</label>
+                            <input
+                                type="password"
+                                className="form-input"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button
+                            type="button"
+                            className="btn btn-primary login-btn"
+                            onClick={handleLogin}
+                            disabled={loading}
+                        >
+                            {loading ? 'Signing in...' : 'Sign In'}
+                        </button>
                     </div>
-
-                    <div className="form-group">
-                        <label className="form-label">Password</label>
-                        <input
-                            type="password"
-                            className="form-input"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                            placeholder="••••••••"
-                        />
-                    </div>
-
-                    <button
-                        type="button"
-                        className="btn btn-primary login-btn"
-                        onClick={handleLogin}
-                        disabled={loading}
-                    >
-                        {loading ? 'Signing in...' : 'Sign In'}
-                    </button>
                 </div>
             </div>
         </div>

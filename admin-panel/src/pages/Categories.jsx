@@ -7,9 +7,11 @@ export default function Categories() {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
-    const [formData, setFormData] = useState({ name: '', description: '', isActive: true, bannerImage: '' });
+    const [formData, setFormData] = useState({ name: '', description: '', isActive: true, bannerImage: '', applicationAreas: [] });
     const [editingId, setEditingId] = useState(null);
     const [uploading, setUploading] = useState(false);
+
+    const APPLICATION_AREAS = ['indoor', 'outdoor', 'commercial', 'industrial', 'accessories'];
 
     const token = localStorage.getItem('token');
     const config = { headers: { Authorization: `Bearer ${token}` } };
@@ -72,19 +74,29 @@ export default function Categories() {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', description: '', isActive: true, bannerImage: '' });
+        setFormData({ name: '', description: '', isActive: true, bannerImage: '', applicationAreas: [] });
         setEditingId(null);
     };
 
     const handleEdit = (category) => {
         setFormData({
             name: category.name,
-            description: category.description,
+            description: category.description || '',
             isActive: category.isActive,
-            bannerImage: category.bannerImage || ''
+            bannerImage: category.bannerImage || '',
+            applicationAreas: category.applicationAreas || []
         });
         setEditingId(category._id);
         setShowModal(true);
+    };
+
+    const handleAreaToggle = (area) => {
+        setFormData(prev => {
+            const current = new Set(prev.applicationAreas);
+            if (current.has(area)) current.delete(area);
+            else current.add(area);
+            return { ...prev, applicationAreas: Array.from(current) };
+        });
     };
 
     const handleDelete = async (id) => {
@@ -234,6 +246,25 @@ export default function Categories() {
                                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     />
                                 </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Application Areas</label>
+                                    <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', border: '2px solid #d1d5db', borderRadius: '8px', padding: '12px' }}>
+                                        {APPLICATION_AREAS.map(area => (
+                                            <label key={area} style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '14px', color: '#374151' }}>
+                                                <input
+                                                    type="checkbox"
+                                                    checked={formData.applicationAreas.includes(area)}
+                                                    onChange={() => handleAreaToggle(area)}
+                                                    style={{ accentColor: '#4f46e5', width: '16px', height: '16px' }}
+                                                />
+                                                {area.charAt(0).toUpperCase() + area.slice(1)}
+                                            </label>
+                                        ))}
+                                    </div>
+                                    <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>Select areas where products in this category are commonly used.</p>
+                                </div>
+
                                 <div className="form-group">
                                     <label className="form-label">Status</label>
                                     <select

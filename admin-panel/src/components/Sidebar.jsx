@@ -11,9 +11,11 @@ export default function Sidebar() {
 
     return (
         <aside className="sidebar">
-            <div className="sidebar-logo">
-                <img src="/Lichtor-01.png" alt="LICHTOR" />
-                <span>Admin</span>
+            <div className="sidebar-header">
+                <div className="sidebar-logo">
+                    <img src="/Lichtor-01.png" alt="LICHTOR" />
+                    <span>Admin</span>
+                </div>
             </div>
 
             <nav className="nav-menu">

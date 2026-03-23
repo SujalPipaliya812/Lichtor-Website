@@ -25,6 +25,14 @@ const CategorySchema = new mongoose.Schema({
         type: Boolean,
         default: true
     },
+    applicationAreas: {
+        type: [String],
+        default: []
+    },
+    productGroup: {
+        type: String,
+        default: ''
+    },
     order: {
         type: Number,
         default: 0

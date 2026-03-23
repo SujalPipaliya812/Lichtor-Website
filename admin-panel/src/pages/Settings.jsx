@@ -1,17 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const Settings = () => {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('company');
+    const [users, setUsers] = useState([]);
+    const [showAddUser, setShowAddUser] = useState(false);
+    const [newUser, setNewUser] = useState({ name: '', email: '', password: '', role: 'editor' });
+
+    useEffect(() => {
+        if (activeTab === 'users' && user?.role === 'admin') {
+            fetchUsers();
+        }
+    }, [activeTab, user]);
+
+    const fetchUsers = async () => {
+        try {
+            const res = await api.get('/auth/users');
+            setUsers(Array.isArray(res.data) ? res.data : []);
+        } catch (error) {
+            console.error('Failed to fetch users:', error);
+        }
+    };
+
+    const handleAddUser = async (e) => {
+        e.preventDefault();
+        try {
+            await api.post('/auth/register', newUser);
+            setShowAddUser(false);
+            setNewUser({ name: '', email: '', password: '', role: 'editor' });
+            fetchUsers();
+            alert('User successfully added!');
+        } catch (error) {
+            alert(error.response?.data?.message || 'Failed to add user');
+        }
+    };
 
     return (
         <>
             <Header title="Settings" />
             <div className="page-content">
                 {/* Tabs */}
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', borderBottom: '1px solid #E5E7EB', paddingBottom: '0' }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '24px', borderBottom: '1px solid var(--gray-200)', paddingBottom: '0' }}>
                     {['company', 'profile', 'users'].map((tab) => (
                         <button
                             key={tab}
@@ -22,9 +54,9 @@ const Settings = () => {
                                 background: 'none',
                                 cursor: 'pointer',
                                 fontSize: '14px',
-                                fontWeight: '500',
-                                color: activeTab === tab ? '#0066CC' : '#6B7280',
-                                borderBottom: activeTab === tab ? '2px solid #0066CC' : '2px solid transparent',
+                                fontWeight: '600',
+                                color: activeTab === tab ? 'var(--primary)' : 'var(--gray-500)',
+                                borderBottom: activeTab === tab ? '2px solid var(--primary)' : '2px solid transparent',
                                 marginBottom: '-1px'
                             }}
                         >
@@ -36,7 +68,7 @@ const Settings = () => {
                 {/* Company Settings */}
                 {activeTab === 'company' && (
                     <div className="card">
-                        <div className="card-header">
+                        <div className="card-header" style={{ marginBottom: '20px' }}>
                             <h3 className="card-title">Company Information</h3>
                         </div>
                         <div className="card-body">
@@ -70,7 +102,7 @@ const Settings = () => {
                 {/* Profile Settings */}
                 {activeTab === 'profile' && (
                     <div className="card">
-                        <div className="card-header">
+                        <div className="card-header" style={{ marginBottom: '20px' }}>
                             <h3 className="card-title">Your Profile</h3>
                         </div>
                         <div className="card-body">
@@ -89,8 +121,8 @@ const Settings = () => {
                                 </div>
                             </div>
 
-                            <div style={{ borderTop: '1px solid #E5E7EB', marginTop: '24px', paddingTop: '24px' }}>
-                                <h4 style={{ marginBottom: '16px', fontWeight: '600' }}>Change Password</h4>
+                            <div style={{ borderTop: '1px solid var(--gray-200)', marginTop: '24px', paddingTop: '24px' }}>
+                                <h4 style={{ marginBottom: '16px', fontWeight: '600', color: 'var(--gray-800)' }}>Change Password</h4>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
                                     <div className="form-group">
                                         <label className="form-label">Current Password</label>
@@ -115,9 +147,9 @@ const Settings = () => {
                 {/* Users Settings */}
                 {activeTab === 'users' && (
                     <div className="card">
-                        <div className="card-header">
+                        <div className="card-header" style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <h3 className="card-title">User Management</h3>
-                            <button className="btn btn-primary btn-sm">+ Add User</button>
+                            <button className="btn btn-primary btn-sm" onClick={() => setShowAddUser(true)}>+ Add User</button>
                         </div>
                         <div className="card-body" style={{ padding: 0 }}>
                             <table className="data-table">
@@ -131,28 +163,86 @@ const Settings = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                <div className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
-                                                    {user?.name?.charAt(0) || 'A'}
+                                    {users.length > 0 ? users.map(u => (
+                                        <tr key={u._id}>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
+                                                        {u.name?.charAt(0).toUpperCase() || 'A'}
+                                                    </div>
+                                                    <strong style={{ color: 'var(--gray-900)' }}>{u.name}</strong>
                                                 </div>
-                                                <strong>{user?.name || 'Admin'}</strong>
-                                            </div>
-                                        </td>
-                                        <td>{user?.email || 'admin@lichtor.com'}</td>
-                                        <td style={{ textTransform: 'capitalize' }}>{user?.role || 'admin'}</td>
-                                        <td><span className="badge badge-success">Active</span></td>
-                                        <td>
-                                            <button className="btn btn-secondary btn-sm">Edit</button>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td>{u.email}</td>
+                                            <td style={{ textTransform: 'capitalize' }}>{u.role}</td>
+                                            <td><span className="badge badge-success" style={{ background: '#d1fae5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>Active</span></td>
+                                            <td>
+                                                <button className="btn btn-secondary btn-sm">Edit</button>
+                                            </td>
+                                        </tr>
+                                    )) : (
+                                        <tr>
+                                            <td>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                    <div className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
+                                                        {user?.name?.charAt(0) || 'A'}
+                                                    </div>
+                                                    <strong style={{ color: 'var(--gray-900)' }}>{user?.name || 'Admin'}</strong>
+                                                </div>
+                                            </td>
+                                            <td>{user?.email || 'admin@lichtor.com'}</td>
+                                            <td style={{ textTransform: 'capitalize' }}>{user?.role || 'admin'}</td>
+                                            <td><span className="badge badge-success" style={{ background: '#d1fae5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>Active</span></td>
+                                            <td>
+                                                <button className="btn btn-secondary btn-sm">Edit</button>
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 )}
             </div>
+
+            {/* Add User Modal */}
+            {showAddUser && (
+                <div className="modal-overlay" onClick={() => setShowAddUser(false)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3>Add New User</h3>
+                            <button className="btn-close" onClick={() => setShowAddUser(false)}>×</button>
+                        </div>
+                        <div className="modal-body">
+                            <form onSubmit={handleAddUser}>
+                                <div className="form-group">
+                                    <label className="form-label">Full Name</label>
+                                    <input type="text" className="form-input" required value={newUser.name} onChange={e => setNewUser({ ...newUser, name: e.target.value })} />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Email</label>
+                                    <input type="email" className="form-input" required value={newUser.email} onChange={e => setNewUser({ ...newUser, email: e.target.value })} />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Password</label>
+                                    <input type="password" className="form-input" required value={newUser.password} onChange={e => setNewUser({ ...newUser, password: e.target.value })} />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Role</label>
+                                    <select className="form-select form-input" required value={newUser.role} onChange={e => setNewUser({ ...newUser, role: e.target.value })}>
+                                        <option value="admin">Admin</option>
+                                        <option value="editor">Editor</option>
+                                    </select>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+                                    <button type="button" className="btn btn-secondary" onClick={() => setShowAddUser(false)}>Cancel</button>
+                                    <button type="submit" className="btn btn-primary">Add User</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
