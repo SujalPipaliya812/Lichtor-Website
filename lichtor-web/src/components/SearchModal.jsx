@@ -92,10 +92,21 @@ export default function SearchModal({ isOpen, onClose }) {
                         <>
                             <div className="suggestion-label">Popular Categories</div>
                             <div className="suggestion-chips">
-                                {['Indoor', 'Outdoor', 'Panel Lights', 'Downlighters', 'Tube Lights', 'Street Lights', 'Industrial'].map(cat => (
-                                    <button key={cat} className="chip" onClick={() => setQuery(cat)}>
-                                        {cat}
-                                    </button>
+                                {[
+                                    { name: 'Indoor', slug: 'indoor' },
+                                    { name: 'Outdoor', slug: 'outdoor' },
+                                    { name: 'Commercial', slug: 'commercial' },
+                                    { name: 'Industrial', slug: 'industrial' },
+                                    { name: 'Accessories', slug: 'accessories' }
+                                ].map(cat => (
+                                    <Link 
+                                        key={cat.slug} 
+                                        href={`/categories/${cat.slug}`} 
+                                        className="chip"
+                                        onClick={onClose}
+                                    >
+                                        {cat.name}
+                                    </Link>
                                 ))}
                             </div>
                         </>
