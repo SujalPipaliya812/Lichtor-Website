@@ -1,8 +1,11 @@
 'use client';
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import SearchModal from '@/components/SearchModal';
 
 export default function Header() {
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
     useEffect(() => {
         const header = document.getElementById('header');
         const handleScroll = () => {
@@ -36,7 +39,7 @@ export default function Header() {
                         </div>
                     </nav>
                     <div className="header-actions">
-                        <button className="search-btn" aria-label="Search">
+                        <button className="search-btn" aria-label="Search" onClick={() => setIsSearchOpen(true)}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <circle cx="11" cy="11" r="8" />
                                 <path d="M21 21l-4.35-4.35" />
@@ -49,6 +52,7 @@ export default function Header() {
                     </div>
                 </div>
             </div>
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </header>
     );
 }

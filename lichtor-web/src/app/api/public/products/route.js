@@ -6,9 +6,16 @@ export async function GET(request) {
     await dbConnect();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
+    const q = searchParams.get('q');
 
     let query = { isActive: true };
     if (category) query.category = category;
+    if (q) {
+        query.$or = [
+            { name: { $regex: q, $options: 'i' } },
+            { description: { $regex: q, $options: 'i' } }
+        ];
+    }
 
     const products = await Product.find(query).populate('category').sort({ createdAt: -1 });
     return NextResponse.json({ products, total: products.length });
