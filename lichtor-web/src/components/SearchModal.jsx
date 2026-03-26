@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 export default function SearchModal({ isOpen, onClose }) {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
-    const [catResults, setCatResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const inputRef = useRef(null);
     const router = useRouter();
@@ -19,7 +18,6 @@ export default function SearchModal({ isOpen, onClose }) {
             document.body.style.overflow = 'auto';
             setQuery('');
             setResults([]);
-            setCatResults([]);
         }
     }, [isOpen]);
 
@@ -43,7 +41,6 @@ export default function SearchModal({ isOpen, onClose }) {
                 const res = await fetch(`/api/public/products?q=${encodeURIComponent(query)}`);
                 const data = await res.json();
                 setResults(data.products || []);
-                setCatResults(data.categories || []);
             } catch (err) {
                 console.error('Failed to search:', err);
             } finally {
@@ -115,44 +112,17 @@ export default function SearchModal({ isOpen, onClose }) {
                         </>
                     )}
                 </div>
-                
-                <div className="search-results">
+                                <div className="search-results">
                     {isLoading && <div className="search-loading">Searching...</div>}
-                    
-                    {!isLoading && query && results.length === 0 && catResults.length === 0 && (
+
+                    {!isLoading && query && results.length === 0 && (
                         <div className="search-empty">
-                            No results found matching "{query}"
+                            No products found matching "{query}"
                         </div>
                     )}
 
-                    {!isLoading && (results.length > 0 || catResults.length > 0) && (
+                    {!isLoading && results.length > 0 && (
                         <div className="search-list">
-                            {/* Category Results First */}
-                            {catResults.map(cat => (
-                                <Link 
-                                    key={cat.slug} 
-                                    href={`/categories#${cat.slug}`}
-                                    className="search-item category-result"
-                                    onClick={onClose}
-                                >
-                                    <div className="search-item-image category-icon">
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                            <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" />
-                                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                                            <line x1="12" y1="22.08" x2="12" y2="12" />
-                                        </svg>
-                                    </div>
-                                    <div className="search-item-content">
-                                        <h4 className="search-item-title">{cat.name}</h4>
-                                        <span className="search-item-category">Go to Category</span>
-                                    </div>
-                                    <svg className="search-item-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M5 12h14M12 5l7 7-7 7" />
-                                    </svg>
-                                </Link>
-                            ))}
-
-                            {/* Product Results */}
                             {results.map(product => (
                                 <Link 
                                     key={product._id} 
