@@ -58,6 +58,13 @@ export default function CategoriesClient({ categories, isFromDB }) {
             const hash = window.location.hash.replace('#', '');
             if (hash && ['indoor', 'outdoor', 'commercial', 'industrial', 'accessories'].includes(hash)) {
                 setActiveFilter(hash);
+                // Scroll to filter tabs after a short delay to allow content change
+                setTimeout(() => {
+                    const element = document.getElementById('category-results');
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
             }
         };
 
@@ -85,7 +92,7 @@ export default function CategoriesClient({ categories, isFromDB }) {
         <section className="section" style={{ paddingTop: 0 }}>
             <div className="container">
                 {/* Filter Tabs */}
-                <div className="filter-tabs">
+                <div id="category-results" className="filter-tabs">
                     {filterTabs.map(tab => (
                         <button
                             key={tab.filter}

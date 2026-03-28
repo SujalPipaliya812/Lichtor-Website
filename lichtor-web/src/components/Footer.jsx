@@ -31,12 +31,11 @@ export default function Footer() {
                     <div className="footer-column">
                         <h4>Products</h4>
                         <div className="footer-links">
-                            <Link href="/categories#panel-lights" className="footer-link">Panel Lights</Link>
-                            <Link href="/categories#downlighters" className="footer-link">Downlighters</Link>
-                            <Link href="/categories#tube-lights" className="footer-link">Tube Lights</Link>
-                            <Link href="/categories#led-bulbs" className="footer-link">LED Bulbs</Link>
-                            <Link href="/categories#street-lights" className="footer-link">Street Lights</Link>
-                            <Link href="/categories#industrial" className="footer-link">Industrial Lights</Link>
+                            <a href="/categories#indoor" className="footer-link">Indoor</a>
+                            <a href="/categories#outdoor" className="footer-link">Outdoor</a>
+                            <a href="/categories#commercial" className="footer-link">Commercial</a>
+                            <a href="/categories#industrial" className="footer-link">Industrial</a>
+                            <a href="/categories#accessories" className="footer-link">Accessories</a>
                         </div>
                     </div>
                     <div className="footer-column">

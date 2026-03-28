@@ -7,12 +7,20 @@ const Enquiries = () => {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('');
     const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+    const enquiryTabs = [
+        { label: 'All Inquiries', status: '' },
+        { label: 'New Inquiries', status: 'new' },
+        { label: 'Open / Active', status: 'read,contacted,negotiating,replied' },
+        { label: 'Pending / Follow-up', status: 'pending' },
+        { label: 'Closed Inquiries', status: 'closed,converted' }
+    ];
 
     useEffect(() => {
         fetchEnquiries();
     }, [filter]);
 
     const fetchEnquiries = async () => {
+        setLoading(true);
         try {
             const params = filter ? `?status=${filter}` : '';
             const response = await api.get(`/enquiries${params}`);
@@ -38,9 +46,12 @@ const Enquiries = () => {
 
     const statusColors = {
         new: 'info',
+        read: 'info',
         contacted: 'warning',
+        replied: 'success',
         negotiating: 'warning',
         converted: 'success',
+        pending: 'primary',
         closed: 'error'
     };
 
@@ -48,17 +59,29 @@ const Enquiries = () => {
         <>
             <Header title="Enquiries" />
             <div className="page-content">
-                {/* Filters */}
-                <div style={{ marginBottom: '24px', display: 'flex', gap: '8px' }}>
-                    {['', 'new', 'contacted', 'negotiating', 'converted', 'closed'].map((status) => (
-                        <button
-                            key={status}
-                            className={`btn ${filter === status ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-                            onClick={() => setFilter(status)}
-                        >
-                            {status || 'All'}
-                        </button>
-                    ))}
+                {/* Tabs */}
+                <div className="tabs-container" style={{ marginBottom: '24px', borderBottom: '1px solid #E5E7EB' }}>
+                    <div style={{ display: 'flex', gap: '32px' }}>
+                        {enquiryTabs.map((tab) => (
+                            <button
+                                key={tab.label}
+                                onClick={() => setFilter(tab.status)}
+                                style={{
+                                    padding: '12px 4px',
+                                    background: 'none',
+                                    border: 'none',
+                                    borderBottom: filter === tab.status ? '2px solid #2563EB' : '2px solid transparent',
+                                    color: filter === tab.status ? '#2563EB' : '#6B7280',
+                                    fontWeight: filter === tab.status ? '600' : '500',
+                                    fontSize: '14px',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s'
+                                }}
+                            >
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: selectedEnquiry ? '1fr 400px' : '1fr', gap: '24px' }}>
@@ -148,8 +171,11 @@ const Enquiries = () => {
                                         onChange={(e) => updateStatus(selectedEnquiry._id, e.target.value)}
                                     >
                                         <option value="new">New</option>
+                                        <option value="read">Read</option>
                                         <option value="contacted">Contacted</option>
+                                        <option value="replied">Replied</option>
                                         <option value="negotiating">Negotiating</option>
+                                        <option value="pending">Pending</option>
                                         <option value="converted">Converted</option>
                                         <option value="closed">Closed</option>
                                     </select>

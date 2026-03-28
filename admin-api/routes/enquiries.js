@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const router = express.Router();
 const Enquiry = require('../models/Enquiry');
 const { protect, authorize } = require('../middleware/auth');
@@ -11,7 +12,17 @@ router.get('/', protect, async (req, res) => {
         const { status, priority, type, page = 1, limit = 20 } = req.query;
 
         let query = {};
-        if (status) query.status = status;
+        if (status) {
+            if (Array.isArray(status)) {
+                query.status = { $in: status };
+            } else if (typeof status === 'string' && status.includes(',')) {
+                query.status = { $in: status.split(',').map(s => s.trim()) };
+            } else {
+                query.status = status;
+            }
+        }
+        fs.appendFileSync('query_debug.log', `Query: ${JSON.stringify(query)}\n`);
+        console.log('Enquiry Query:', JSON.stringify(query));
         if (priority) query.priority = priority;
         if (type) query.enquiryType = type;
 

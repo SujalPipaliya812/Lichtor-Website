@@ -107,14 +107,8 @@ export default async function ProductDetailPage({ params }) {
                         <Link href="/">Home</Link>
                         <span className="breadcrumb-separator">/</span>
                         <Link href="/categories">Categories</Link>
-                        {product.category && (
-                            <>
-                                <span className="breadcrumb-separator">/</span>
-                                <Link href="/categories">{product.category.name}</Link>
-                            </>
-                        )}
                         <span className="breadcrumb-separator">/</span>
-                        <span>{product.name}</span>
+                        <span>{product.category ? product.category.name : product.name}</span>
                     </nav>
                 </div>
             </section>

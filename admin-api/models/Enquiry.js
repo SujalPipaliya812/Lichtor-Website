@@ -35,7 +35,7 @@ const enquirySchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['new', 'contacted', 'negotiating', 'converted', 'closed'],
+        enum: ['new', 'read', 'contacted', 'replied', 'negotiating', 'converted', 'pending', 'closed'],
         default: 'new'
     },
     priority: {
