@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 export default function Dashboard() {
     const [stats, setStats] = useState({ products: 0, categories: 0, enquiries: 0, activeProducts: 0 });
@@ -21,9 +21,9 @@ export default function Dashboard() {
         const fetchAll = async () => {
             try {
                 const [prodRes, catRes, enqRes] = await Promise.all([
-                    axios.get(`${API_URL}/products?limit=100`, config).catch(() => ({ data: { products: [] } })),
-                    axios.get(`${API_URL}/categories`, config).catch(() => ({ data: [] })),
-                    axios.get(`${API_URL}/enquiries`, config).catch(() => ({ data: [] }))
+                    api.get('/products?limit=100').catch(() => ({ data: { products: [] } })),
+                    api.get('/categories').catch(() => ({ data: [] })),
+                    api.get('/enquiries').catch(() => ({ data: [] }))
                 ]);
 
                 const prods = prodRes.data?.products || prodRes.data || [];
@@ -49,7 +49,7 @@ export default function Dashboard() {
 
     const imgSrc = (url) => {
         if (!url) return '';
-        return url.startsWith('http') || url.startsWith('/assets') ? url : `http://localhost:5001${url}`;
+        return url.startsWith('http') || url.startsWith('/assets') ? url : `${API_BASE_URL}${url}`;
     };
 
     return (

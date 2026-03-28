@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
-const API_URL = 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 const emptyWattRow = () => ({ watt: '', lumen: '', cct: '', current: '' });
 const emptyType = () => ({ name: '', bodyColors: [''] });
@@ -33,8 +33,6 @@ export default function Products() {
     const [filterStatus, setFilterStatus] = useState('');
     const [sortBy, setSortBy] = useState('latest');
 
-    const token = localStorage.getItem('token');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
 
     useEffect(() => { fetchData(); }, [searchQuery, filterCategory, filterStatus, sortBy]);
 
@@ -48,8 +46,8 @@ export default function Products() {
             params.append('limit', '100');
 
             const [prodRes, catRes] = await Promise.all([
-                axios.get(`${API_URL}/products?${params.toString()}`, config),
-                axios.get(`${API_URL}/categories`, config)
+                api.get(`/products?${params.toString()}`),
+                api.get('/categories')
             ]);
             setProducts(prodRes.data.products || []);
             setCategories(catRes.data || []);
@@ -69,8 +67,8 @@ export default function Products() {
         fd.append('folder', 'products');
         setUploading(prev => ({ ...prev, [field]: true }));
         try {
-            const res = await axios.post(`${API_URL}/media/upload`, fd, {
-                headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
+            const res = await api.post('/media/upload', fd, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             setFormData(prev => ({ ...prev, [field]: res.data.url }));
         } catch {
@@ -90,8 +88,8 @@ export default function Products() {
                 const fd = new FormData();
                 fd.append('file', file);
                 fd.append('folder', 'products');
-                const res = await axios.post(`${API_URL}/media/upload`, fd, {
-                    headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
+                const res = await api.post('/media/upload', fd, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 urls.push(res.data.url);
             }
@@ -189,9 +187,9 @@ export default function Products() {
         };
         try {
             if (editingId) {
-                await axios.put(`${API_URL}/products/${editingId}`, payload, config);
+                await api.put(`/products/${editingId}`, payload);
             } else {
-                await axios.post(`${API_URL}/products`, payload, config);
+                await api.post('/products', payload);
             }
             fetchData();
             setShowModal(false);
@@ -227,7 +225,7 @@ export default function Products() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
             try {
-                await axios.delete(`${API_URL}/products/${id}`, config);
+                await api.delete(`/products/${id}`);
                 fetchData();
             } catch { alert('Failed to delete product'); }
         }
@@ -235,14 +233,14 @@ export default function Products() {
 
     const handleDuplicate = async (id) => {
         try {
-            await axios.post(`${API_URL}/products/${id}/duplicate`, {}, config);
+            await api.post(`/products/${id}/duplicate`, {});
             fetchData();
         } catch { alert('Failed to duplicate product'); }
     };
 
     const handleToggleStatus = async (id) => {
         try {
-            await axios.patch(`${API_URL}/products/${id}/status`, {}, config);
+            await api.patch(`/products/${id}/status`, {});
             fetchData();
         } catch { alert('Failed to toggle status'); }
     };
@@ -259,7 +257,7 @@ export default function Products() {
 
     const imgSrc = (url) => {
         if (!url) return '';
-        return url.startsWith('http') || url.startsWith('/assets') ? url : `http://localhost:5001${url}`;
+        return url.startsWith('http') || url.startsWith('/assets') ? url : `${API_BASE_URL}${url}`;
     };
 
     // ── RENDER ──
@@ -350,7 +348,7 @@ export default function Products() {
                                             <div style={{ display: 'flex', gap: '6px' }}>
                                                 <button className="btn-icon" onClick={() => handleEdit(product)} title="Edit">✏️</button>
                                                 <button className="btn-icon" onClick={() => handleDuplicate(product._id)} title="Duplicate">📋</button>
-                                                <button className="btn-icon" onClick={() => window.open(`http://localhost:3000/products/${product.slug}`, '_blank')} title="Preview">👁️</button>
+                                                <button className="btn-icon" onClick={() => window.open(`${import.meta.env.VITE_WEB_URL || 'http://localhost:3000'}/products/${product.slug}`, '_blank')} title="Preview">👁️</button>
                                                 <button className="btn-icon delete" onClick={() => handleDelete(product._id)} title="Delete">🗑️</button>
                                             </div>
                                         </td>

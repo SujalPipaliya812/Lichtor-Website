@@ -298,9 +298,24 @@ const startServer = async () => {
     }
     setupRoutes();
 
-    app.listen(PORT, () => {
-        console.log(`\n🚀 LICHTOR Admin API running on port ${PORT}\n`);
-    });
+    if (process.env.NODE_ENV !== 'production') {
+        app.listen(PORT, () => {
+            console.log(`\n🚀 LICHTOR Admin API running on port ${PORT}\n`);
+        });
+    }
 };
 
-startServer();
+// For Vercel: We need to ensure connectivity and routes are setup
+// but we only want to listen locally.
+if (process.env.VERCEL) {
+    // On Vercel, we can't await at top level easily in some node versions
+    // but we can ensure routes are setup.
+    connectDB().then(() => {
+        if (isMongoConnected) seedAdmin();
+        setupRoutes();
+    });
+} else {
+    startServer();
+}
+
+module.exports = app;

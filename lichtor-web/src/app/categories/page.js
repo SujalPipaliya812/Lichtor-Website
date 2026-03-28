@@ -5,6 +5,7 @@ import Product from '@/lib/models/Product';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CategoriesClient from './CategoriesClient';
+import { API_URL } from '@/lib/constants';
 
 // Fallback static categories used when DB has no data yet
 const fallbackCategories = [
@@ -78,7 +79,7 @@ async function getCategories() {
                     img: cat.bannerImage
                         ? (cat.bannerImage.startsWith('/assets') 
                             ? cat.bannerImage 
-                            : `http://localhost:5001${cat.bannerImage}`)
+                            : `${API_URL}${cat.bannerImage}`)
                         : (fallback?.img || 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop'),
                     count: productCount,
                     bodyColors: allColors,

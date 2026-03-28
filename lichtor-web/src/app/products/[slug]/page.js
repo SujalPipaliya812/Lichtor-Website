@@ -4,6 +4,7 @@ import Product from '@/lib/models/Product';
 import Category from '@/lib/models/Category';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { API_URL } from '@/lib/constants';
 import ProductGallery from './ProductGallery';
 import ProductOptions from './ProductOptions';
 export async function generateMetadata({ params }) {
@@ -121,7 +122,7 @@ export default async function ProductDetailPage({ params }) {
                          <ProductGallery 
                             images={
                                 (product.gallery?.length > 0 ? product.gallery : product.images?.length > 0 ? product.images : (product.image ? [product.image] : [])).map(img => 
-                                    img.startsWith('http') || img.startsWith('/assets') ? img : `http://localhost:5001${img}`
+                                    img.startsWith('http') || img.startsWith('/assets') ? img : `${API_URL}${img}`
                                 )
                             } 
                             name={product.name} 
@@ -235,7 +236,7 @@ export default async function ProductDetailPage({ params }) {
                                 const imgSrc = sp.image
                                     ? sp.image.startsWith('http') || sp.image.startsWith('/assets')
                                         ? sp.image
-                                        : `http://localhost:5001${sp.image}`
+                                        : `${API_URL}${sp.image}`
                                     : null;
                                     
                                 const getColorCode = (colorName) => {

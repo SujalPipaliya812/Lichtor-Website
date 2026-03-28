@@ -38,6 +38,26 @@ const Settings = () => {
         }
     };
 
+    const handleDeleteUser = async (userId, userName) => {
+        if (!confirm(`Are you sure you want to permanently delete "${userName}"? This action cannot be undone.`)) return;
+        try {
+            await api.delete(`/auth/users/${userId}`);
+            fetchUsers();
+            alert('User deleted successfully');
+        } catch (error) {
+            alert(error.response?.data?.message || 'Failed to delete user');
+        }
+    };
+
+    const handleToggleUser = async (userId) => {
+        try {
+            await api.patch(`/auth/users/${userId}/toggle`);
+            fetchUsers();
+        } catch (error) {
+            alert(error.response?.data?.message || 'Failed to update user status');
+        }
+    };
+
     return (
         <>
             <Header title="Settings" />
@@ -163,38 +183,58 @@ const Settings = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {users.length > 0 ? users.map(u => (
+                                    {users.length > 0 ? users.map(u => {
+                                        const isSelf = user?._id === u._id;
+                                        return (
                                         <tr key={u._id}>
                                             <td>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                     <div className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
                                                         {u.name?.charAt(0).toUpperCase() || 'A'}
                                                     </div>
-                                                    <strong style={{ color: 'var(--gray-900)' }}>{u.name}</strong>
+                                                    <strong style={{ color: 'var(--gray-900)' }}>{u.name}{isSelf ? ' (You)' : ''}</strong>
                                                 </div>
                                             </td>
                                             <td>{u.email}</td>
                                             <td style={{ textTransform: 'capitalize' }}>{u.role}</td>
-                                            <td><span className="badge badge-success" style={{ background: '#d1fae5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>Active</span></td>
                                             <td>
-                                                <button className="btn btn-secondary btn-sm">Edit</button>
+                                                <span style={{
+                                                    background: u.isActive !== false ? '#d1fae5' : '#fee2e2',
+                                                    color: u.isActive !== false ? '#065f46' : '#991b1b',
+                                                    padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600'
+                                                }}>
+                                                    {u.isActive !== false ? 'Active' : 'Inactive'}
+                                                </span>
                                             </td>
-                                        </tr>
-                                    )) : (
-                                        <tr>
                                             <td>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                    <div className="user-avatar" style={{ width: '32px', height: '32px', fontSize: '12px' }}>
-                                                        {user?.name?.charAt(0) || 'A'}
-                                                    </div>
-                                                    <strong style={{ color: 'var(--gray-900)' }}>{user?.name || 'Admin'}</strong>
+                                                <div style={{ display: 'flex', gap: '8px' }}>
+                                                    {!isSelf && (
+                                                        <>
+                                                            <button
+                                                                className="btn btn-secondary btn-sm"
+                                                                onClick={() => handleToggleUser(u._id)}
+                                                                title={u.isActive !== false ? 'Deactivate user' : 'Activate user'}
+                                                            >
+                                                                {u.isActive !== false ? 'Deactivate' : 'Activate'}
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm"
+                                                                onClick={() => handleDeleteUser(u._id, u.name)}
+                                                                style={{ background: '#fee2e2', color: '#991b1b', border: 'none', cursor: 'pointer' }}
+                                                            >
+                                                                Delete
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                    {isSelf && <span style={{ color: 'var(--gray-400)', fontSize: '12px' }}>—</span>}
                                                 </div>
                                             </td>
-                                            <td>{user?.email || 'admin@lichtor.com'}</td>
-                                            <td style={{ textTransform: 'capitalize' }}>{user?.role || 'admin'}</td>
-                                            <td><span className="badge badge-success" style={{ background: '#d1fae5', color: '#065f46', padding: '4px 8px', borderRadius: '4px', fontSize: '12px', fontWeight: '600' }}>Active</span></td>
-                                            <td>
-                                                <button className="btn btn-secondary btn-sm">Edit</button>
+                                        </tr>
+                                        );
+                                    }) : (
+                                        <tr>
+                                            <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: 'var(--gray-400)' }}>
+                                                No users found
                                             </td>
                                         </tr>
                                     )}

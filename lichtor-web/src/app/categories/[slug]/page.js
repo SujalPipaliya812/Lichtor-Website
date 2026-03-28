@@ -4,6 +4,7 @@ import Product from '@/lib/models/Product';
 import Category from '@/lib/models/Category';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { API_URL } from '@/lib/constants';
 
 const staticData = {
     'panel-lights': {
@@ -131,7 +132,7 @@ export default async function CategoryDetailPage({ params }) {
                                 const imgSrc = (p.image || (p.images && p.images[0])) 
                                     ? ((p.image || p.images[0]).startsWith('http') || (p.image || p.images[0]).startsWith('/assets')
                                         ? (p.image || p.images[0])
-                                        : `http://localhost:5001${p.image || p.images[0]}`)
+                                        : `${API_URL}${p.image || p.images[0]}`)
                                     : null;
 
                                 const getColorCode = (colorName) => {

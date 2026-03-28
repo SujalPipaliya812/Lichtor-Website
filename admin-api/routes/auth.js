@@ -169,4 +169,67 @@ router.post('/setup', async (req, res) => {
     }
 });
 
+// @route   DELETE /api/auth/users/:id
+// @desc    Delete a user (admin only, cannot delete self)
+// @access  Private/Admin
+router.delete('/users/:id', protect, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Only admins can delete users' });
+        }
+
+        if (req.user._id.toString() === req.params.id) {
+            return res.status(400).json({ message: 'You cannot delete your own account' });
+        }
+
+        const userToDelete = await User.findById(req.params.id);
+        if (!userToDelete) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Prevent deleting the last admin
+        if (userToDelete.role === 'admin') {
+            const adminCount = await User.countDocuments({ role: 'admin' });
+            if (adminCount <= 1) {
+                return res.status(400).json({ message: 'Cannot delete the last admin user' });
+            }
+        }
+
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// @route   PATCH /api/auth/users/:id/toggle
+// @desc    Toggle user active/inactive (admin only)
+// @access  Private/Admin
+router.patch('/users/:id/toggle', protect, async (req, res) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Only admins can modify users' });
+        }
+
+        if (req.user._id.toString() === req.params.id) {
+            return res.status(400).json({ message: 'You cannot deactivate your own account' });
+        }
+
+        const targetUser = await User.findById(req.params.id);
+        if (!targetUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        targetUser.isActive = !targetUser.isActive;
+        await targetUser.save({ validateBeforeSave: false });
+
+        res.json({
+            message: `User ${targetUser.isActive ? 'activated' : 'deactivated'} successfully`,
+            isActive: targetUser.isActive
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;

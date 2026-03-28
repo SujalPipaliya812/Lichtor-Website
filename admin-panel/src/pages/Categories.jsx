@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
-const API_URL = 'http://localhost:5001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 export default function Categories() {
     const [categories, setCategories] = useState([]);
@@ -13,8 +13,6 @@ export default function Categories() {
 
     const APPLICATION_AREAS = ['indoor', 'outdoor', 'commercial', 'industrial', 'accessories'];
 
-    const token = localStorage.getItem('token');
-    const config = { headers: { Authorization: `Bearer ${token}` } };
 
     useEffect(() => {
         fetchCategories();
@@ -22,7 +20,7 @@ export default function Categories() {
 
     const fetchCategories = async () => {
         try {
-            const res = await axios.get(`${API_URL}/categories`, config);
+            const res = await api.get('/categories');
             setCategories(res.data);
         } catch (error) {
             console.error('Error fetching categories:', error);
@@ -41,10 +39,9 @@ export default function Categories() {
 
         setUploading(true);
         try {
-            const res = await axios.post(`${API_URL}/media/upload`, formData, {
+            const res = await api.post('/media/upload', formData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`
+                    'Content-Type': 'multipart/form-data'
                 }
             });
             setFormData(prev => ({ ...prev, bannerImage: res.data.url }));
@@ -60,9 +57,9 @@ export default function Categories() {
         e.preventDefault();
         try {
             if (editingId) {
-                await axios.put(`${API_URL}/categories/${editingId}`, formData, config);
+                await api.put(`/categories/${editingId}`, formData);
             } else {
-                await axios.post(`${API_URL}/categories`, formData, config);
+                await api.post('/categories', formData);
             }
             fetchCategories();
             setShowModal(false);
@@ -102,7 +99,7 @@ export default function Categories() {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this category?')) {
             try {
-                await axios.delete(`${API_URL}/categories/${id}`, config);
+                await api.delete(`/categories/${id}`);
                 fetchCategories();
             } catch (error) {
                 console.error('Error deleting category:', error);
@@ -152,7 +149,7 @@ export default function Categories() {
                                         <td>
                                             {cat.bannerImage ? (
                                                 <img
-                                                    src={`http://localhost:5001${cat.bannerImage}`}
+                                                    src={`${API_BASE_URL}${cat.bannerImage}`}
                                                     alt={cat.name}
                                                     style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
                                                 />
@@ -229,7 +226,7 @@ export default function Categories() {
                                     {formData.bannerImage && (
                                         <div style={{ marginTop: '10px' }}>
                                             <img
-                                                src={`http://localhost:5001${formData.bannerImage}`}
+                                                src={`${API_BASE_URL}${formData.bannerImage}`}
                                                 alt="Preview"
                                                 style={{ height: '60px', borderRadius: '4px' }}
                                             />
