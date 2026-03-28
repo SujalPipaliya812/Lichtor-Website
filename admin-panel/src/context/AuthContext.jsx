@@ -7,24 +7,26 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const token = localStorage.getItem('token');
         if (token) {
-            fetchUser();
+            validateToken();
         } else {
             setLoading(false);
         }
-    }, [token]);
+    }, []);
 
-    const fetchUser = async () => {
+    const validateToken = async () => {
         try {
             const response = await api.get('/auth/me');
             setUser(response.data);
         } catch (error) {
-            console.error('Auth error:', error);
-            logout();
+            // Token is invalid or expired — clear everything
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
         } finally {
             setLoading(false);
         }
@@ -33,30 +35,28 @@ export const AuthProvider = ({ children }) => {
     const login = async (email, password) => {
         try {
             const response = await api.post('/auth/login', { email, password });
-            const { token: newToken, user: userData } = response.data;
+            const { token, user: userData } = response.data;
 
-            localStorage.setItem('token', newToken);
-            setToken(newToken);
+            localStorage.setItem('token', token);
             setUser(userData);
 
             return { success: true };
         } catch (error) {
             return {
                 success: false,
-                error: error.response?.data?.message || 'Login failed'
+                error: error.response?.data?.message || 'Invalid email or password'
             };
         }
     };
 
     const logout = () => {
         localStorage.removeItem('token');
-        setToken(null);
+        localStorage.removeItem('user');
         setUser(null);
     };
 
     const value = {
         user,
-        token,
         loading,
         login,
         logout,

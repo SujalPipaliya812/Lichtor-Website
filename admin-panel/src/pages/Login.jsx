@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
-const API_URL = 'http://localhost:5001/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -23,20 +22,15 @@ export default function Login() {
         setLoading(true);
 
         try {
-            const response = await axios.post(`${API_URL}/auth/login`, {
-                email: email.trim(),
-                password
-            });
+            const result = await login(email.trim(), password);
 
-            const { token, user } = response.data;
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user));
-
-            // Force redirect to clear any state issues
-            window.location.href = '/';
+            if (result.success) {
+                navigate('/', { replace: true });
+            } else {
+                setError(result.error || 'Invalid email or password');
+            }
         } catch (err) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
+            setError('Login failed. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -54,8 +48,7 @@ export default function Login() {
 
                     {error && <div className="login-error">{error}</div>}
 
-                    {/* Using a generic div wrapper prevents form submission issues */}
-                    <div className="login-form">
+                    <form className="login-form" onSubmit={handleLogin}>
                         <div className="form-group">
                             <label className="form-label">Email Address</label>
                             <input
@@ -63,8 +56,9 @@ export default function Login() {
                                 className="form-input"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                                placeholder="admin@lichtor.com"
+                                placeholder="Enter your email"
+                                autoComplete="email"
+                                required
                             />
                         </div>
 
@@ -75,20 +69,20 @@ export default function Login() {
                                 className="form-input"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                                placeholder="••••••••"
+                                placeholder="Enter your password"
+                                autoComplete="current-password"
+                                required
                             />
                         </div>
 
                         <button
-                            type="button"
+                            type="submit"
                             className="btn btn-primary login-btn"
-                            onClick={handleLogin}
                             disabled={loading}
                         >
                             {loading ? 'Signing in...' : 'Sign In'}
                         </button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

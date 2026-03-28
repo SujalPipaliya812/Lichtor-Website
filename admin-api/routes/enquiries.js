@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs');
 const router = express.Router();
 const Enquiry = require('../models/Enquiry');
 const { protect, authorize } = require('../middleware/auth');
@@ -21,8 +20,6 @@ router.get('/', protect, async (req, res) => {
                 query.status = status;
             }
         }
-        fs.appendFileSync('query_debug.log', `Query: ${JSON.stringify(query)}\n`);
-        console.log('Enquiry Query:', JSON.stringify(query));
         if (priority) query.priority = priority;
         if (type) query.enquiryType = type;
 

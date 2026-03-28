@@ -284,8 +284,7 @@ app.get('/', (req, res) => {
     res.json({
         message: 'LICHTOR Admin API',
         version: '2.0.0',
-        mongodb: isMongoConnected ? 'Connected' : 'Demo Mode',
-        credentials: { email: 'admin@lichtor.com', password: 'admin123' }
+        status: 'running'
     });
 });
 
@@ -300,8 +299,7 @@ const startServer = async () => {
     setupRoutes();
 
     app.listen(PORT, () => {
-        console.log(`\n🚀 LICHTOR Admin API running on port ${PORT}`);
-        console.log(`🔐 Login: admin@lichtor.com / admin123\n`);
+        console.log(`\n🚀 LICHTOR Admin API running on port ${PORT}\n`);
     });
 };
 
