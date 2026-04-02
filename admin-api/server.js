@@ -305,15 +305,30 @@ const startServer = async () => {
     }
 };
 
-// For Vercel: We need to ensure connectivity and routes are setup
-// but we only want to listen locally.
+// ----- Vercel / Local startup -----
+// We initialize DB + routes once and expose the app.
+// A middleware guards all requests until initialization is done.
+
+let initPromise = null;
+
+const initialize = () => {
+    if (!initPromise) {
+        initPromise = connectDB().then(() => {
+            if (isMongoConnected) seedAdmin();
+            setupRoutes();
+        });
+    }
+    return initPromise;
+};
+
+// Middleware: wait for init before handling any request
+app.use((req, res, next) => {
+    initialize().then(next).catch(next);
+});
+
 if (process.env.VERCEL) {
-    // On Vercel, we can't await at top level easily in some node versions
-    // but we can ensure routes are setup.
-    connectDB().then(() => {
-        if (isMongoConnected) seedAdmin();
-        setupRoutes();
-    });
+    // Kick off initialization immediately so it's ready for the first request
+    initialize();
 } else {
     startServer();
 }
