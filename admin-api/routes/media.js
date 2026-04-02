@@ -3,22 +3,26 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const Media = require('../models/Media');
 const { protect, authorize } = require('../middleware/auth');
 
-// Configure multer storage
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const uploadDir = 'uploads';
-        if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-        }
-        cb(null, uploadDir);
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Configure multer storage for Cloudinary
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'lichtor-web',
+        allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp', 'pdf'], 
+        resource_type: 'auto',
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + path.extname(file.originalname));
-    }
 });
 
 const fileFilter = (req, file, cb) => {
@@ -86,9 +90,9 @@ router.post('/upload', protect, authorize('admin', 'editor'), upload.single('fil
         }
 
         const media = await Media.create({
-            filename: req.file.filename,
+            filename: req.file.filename, // This will be the Cloudinary public_id
             originalName: req.file.originalname,
-            url: `/uploads/${req.file.filename}`,
+            url: req.file.path, // Cloudinary provides secure URL here
             type: getFileType(req.file.mimetype),
             mimeType: req.file.mimetype,
             size: req.file.size,
@@ -115,9 +119,9 @@ router.post('/upload-multiple', protect, authorize('admin', 'editor'), upload.ar
         const mediaItems = await Promise.all(
             req.files.map(file =>
                 Media.create({
-                    filename: file.filename,
+                    filename: file.filename, // Cloudinary public_id
                     originalName: file.originalname,
-                    url: `/uploads/${file.filename}`,
+                    url: file.path, // Cloudinary secure URL
                     type: getFileType(file.mimetype),
                     mimeType: file.mimetype,
                     size: file.size,
@@ -165,10 +169,14 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
             return res.status(404).json({ message: 'Media not found' });
         }
 
-        // Delete file from disk
-        const filePath = path.join('uploads', media.filename);
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        // Delete file from Cloudinary using its public_id
+        if (media.filename && !media.filename.includes('.')) {
+            // Check if it looks like a public_id (no extension). Cloudinary defaults to dropping .ext in public_id.
+            try {
+                await cloudinary.uploader.destroy(media.filename);
+            } catch (err) {
+                console.error("Error deleting from Cloudinary:", err);
+            }
         }
 
         await Media.findByIdAndDelete(req.params.id);
