@@ -7,6 +7,10 @@ import Footer from '@/components/Footer';
 import { API_URL } from '@/lib/constants';
 import ProductGallery from './ProductGallery';
 import ProductOptions from './ProductOptions';
+
+// Enable Incremental Static Regeneration (ISR)
+export const revalidate = 300; // Revalidate every 5 minutes
+
 export async function generateMetadata({ params }) {
     const { slug } = await params;
     try {

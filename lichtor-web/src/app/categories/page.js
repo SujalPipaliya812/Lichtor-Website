@@ -28,72 +28,98 @@ export const metadata = {
     description: 'Browse LICHTOR\'s full range of premium LED lighting products — indoor, outdoor, commercial, and industrial solutions.',
 };
 
+// Enable Incremental Static Regeneration (ISR)
+export const revalidate = 60; // Revalidate every minute
+
 async function getCategories() {
     try {
         await dbConnect();
 
-        // Fetch all active categories from DB, ordered by the `order` field
-        const dbCategories = await Category.find({ isActive: true })
-            .sort({ order: 1, name: 1 })
-            .lean();
+        // 🚀 OPTIMIZATION: Use MongoDB Aggregation to get counts and colors in ONE query
+        // This replaces the previous loop that did 3 queries per category (99+ total)
+        const categoriesWithStats = await Category.aggregate([
+            { $match: { isActive: true } },
+            { $sort: { order: 1, name: 1 } },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: 'category',
+                    as: 'products'
+                }
+            },
+            {
+                $project: {
+                    _id: 1,
+                    name: 1,
+                    slug: 1,
+                    description: 1,
+                    bannerImage: 1,
+                    applicationAreas: 1,
+                    productCount: { 
+                        $size: { 
+                            $filter: { 
+                                input: '$products', 
+                                as: 'p', 
+                                cond: { $eq: ['$$p.isActive', true] } 
+                            } 
+                        } 
+                    },
+                    firstProductSlug: {
+                        $let: {
+                            vars: {
+                                activeProd: {
+                                    $filter: {
+                                        input: '$products',
+                                        as: 'p',
+                                        cond: { $eq: ['$$p.isActive', true] }
+                                    }
+                                }
+                            },
+                            in: { $arrayElemAt: ['$$activeProd.slug', 0] }
+                        }
+                    },
+                    allBodyColors: {
+                        $reduce: {
+                            input: '$products',
+                            initialValue: [],
+                            in: { $setUnion: ['$$value', { $ifNull: ['$$this.bodyColors', []] }] }
+                        }
+                    }
+                }
+            }
+        ]);
 
-        if (!dbCategories || dbCategories.length === 0) {
+        if (!categoriesWithStats || categoriesWithStats.length === 0) {
             return fallbackCategories;
         }
 
-        // For each category, count how many active products are in it and get the first product slug
-        const categoriesWithCount = await Promise.all(
-            dbCategories.map(async (cat) => {
-                const productCount = await Product.countDocuments({
-                    category: cat._id,
-                    isActive: true,
-                });
+        return categoriesWithStats.map(cat => {
+            const fallback = fallbackCategories.find(f =>
+                f.slug === cat.slug || f.name.toLowerCase() === cat.name.toLowerCase()
+            );
 
-                // Get first active product to enable direct linking
-                const firstProduct = await Product.findOne({
-                    category: cat._id,
-                    isActive: true,
-                }).select('slug').lean();
-
-                // Get all unique body colors from products in this category
-                const productsWithColors = await Product.find({
-                    category: cat._id,
-                    isActive: true,
-                }).select('bodyColors').lean();
-                
-                const allColors = [...new Set(
-                    productsWithColors.flatMap(p => p.bodyColors || [])
-                )];
-
-                // Match a fallback entry to get filter tag and image if not stored in DB
-                const fallback = fallbackCategories.find(f =>
-                    f.slug === cat.slug || f.name.toLowerCase() === cat.name.toLowerCase()
-                );
-
-                return {
-                    _id: cat._id.toString(),
-                    name: cat.name,
-                    slug: cat.slug,
-                    productSlug: firstProduct ? firstProduct.slug : null,
-                    desc: cat.description || fallback?.desc || '',
-                    img: cat.bannerImage
-                        ? (cat.bannerImage.startsWith('/assets') 
-                            ? cat.bannerImage 
-                            : `${API_URL}${cat.bannerImage}`)
-                        : (fallback?.img || 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop'),
-                    count: productCount,
-                    bodyColors: allColors,
-                    tag: fallback?.tag || null,
-                    filter: cat.applicationAreas && cat.applicationAreas.length > 0 
-                        ? cat.applicationAreas.join(' ') 
-                        : (fallback?.filter || 'all'),
-                };
-            })
-        );
-
-        return categoriesWithCount;
-    } catch {
-        // If DB is unreachable, fall back to static data
+            return {
+                _id: cat._id.toString(),
+                name: cat.name,
+                slug: cat.slug,
+                productSlug: cat.firstProductSlug || null,
+                desc: cat.description || fallback?.desc || '',
+                img: cat.bannerImage
+                    ? (cat.bannerImage.startsWith('/assets') 
+                        ? cat.bannerImage 
+                        : `${API_URL}${cat.bannerImage}`)
+                    : (fallback?.img || 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop'),
+                count: cat.productCount,
+                bodyColors: cat.allBodyColors || [],
+                tag: fallback?.tag || null,
+                filter: cat.applicationAreas && cat.applicationAreas.length > 0 
+                    ? cat.applicationAreas.join(' ') 
+                    : (fallback?.filter || 'all'),
+            };
+        });
+    } catch (error) {
+        console.error('❌ Categories Fetch Error:', error);
         return fallbackCategories;
     }
 }
