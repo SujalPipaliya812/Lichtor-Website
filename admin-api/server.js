@@ -119,24 +119,30 @@ const pageRoutes = require('./routes/pages');
 const descTemplateRoutes = require('./routes/description-templates');
 
 const setupRoutes = () => {
-    app.use('/api/auth', authRoutes);
-    app.use('/api/public', publicRoutes);
-    app.use('/api/categories', protect, categoryRoutes);
-    app.use('/api/products', protect, productRoutes);
-    app.use('/api/media', protect, mediaRoutes);
-    app.use('/api/enquiries', protect, enquiryRoutes);
-    app.use('/api/pages', protect, pageRoutes);
-    app.use('/api/description-templates', protect, descTemplateRoutes);
+    // Both /api/ and root level routes for compatibility
+    const register = (path, ...handlers) => {
+        app.use(`/api${path}`, ...handlers);
+        app.use(path, ...handlers);
+    };
+
+    register('/auth', authRoutes);
+    register('/public', publicRoutes);
+    register('/categories', protect, categoryRoutes);
+    register('/products', protect, productRoutes);
+    register('/media', protect, mediaRoutes);
+    register('/enquiries', protect, enquiryRoutes);
+    register('/pages', protect, pageRoutes);
+    register('/description-templates', protect, descTemplateRoutes);
     
     // Status endpoint
-    app.get('/api/status', (req, res) => {
+    app.get(['/api/status', '/status'], (req, res) => {
         res.json({ 
             status: 'running', 
             mongodb: isMongoConnected ? 'connected' : 'disconnected' 
         });
     });
 
-    console.log('📦 Routes registered');
+    console.log('📦 Routes registered (root & /api)');
 };
 
 // Root route
