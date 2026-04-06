@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const streamifier = require('streamifier');
 const Media = require('../models/Media');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -15,15 +14,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Configure multer storage for Cloudinary
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'lichtor-web',
-        allowed_formats: ['jpeg', 'jpg', 'png', 'gif', 'webp', 'pdf'], 
-        resource_type: 'auto',
-    },
-});
+// Use MEMORY storage — required for Vercel's read-only filesystem
+// Files are held in RAM as Buffer, then streamed directly to Cloudinary
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp|pdf|doc|docx|xls|xlsx/;
@@ -41,6 +34,20 @@ const upload = multer({
     limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
     fileFilter
 });
+
+// Helper: Upload buffer to Cloudinary via stream (works on serverless)
+const uploadToCloudinary = (buffer, options = {}) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: 'lichtor-web', resource_type: 'auto', ...options },
+            (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            }
+        );
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+};
 
 // Helper to determine file type
 const getFileType = (mimetype) => {
@@ -89,10 +96,15 @@ router.post('/upload', protect, authorize('admin', 'editor'), upload.single('fil
             return res.status(400).json({ message: 'Please upload a file' });
         }
 
+        // Stream the buffer directly to Cloudinary (works on Vercel serverless)
+        const cloudinaryResult = await uploadToCloudinary(req.file.buffer, {
+            public_id: `${Date.now()}-${req.file.originalname.replace(/\.[^/.]+$/, '')}`,
+        });
+
         const media = await Media.create({
-            filename: req.file.filename, // This will be the Cloudinary public_id
+            filename: cloudinaryResult.public_id,
             originalName: req.file.originalname,
-            url: req.file.path, // Cloudinary provides secure URL here
+            url: cloudinaryResult.secure_url,
             type: getFileType(req.file.mimetype),
             mimeType: req.file.mimetype,
             size: req.file.size,
@@ -103,6 +115,7 @@ router.post('/upload', protect, authorize('admin', 'editor'), upload.single('fil
 
         res.status(201).json(media);
     } catch (error) {
+        console.error('Upload error:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -117,22 +130,27 @@ router.post('/upload-multiple', protect, authorize('admin', 'editor'), upload.ar
         }
 
         const mediaItems = await Promise.all(
-            req.files.map(file =>
-                Media.create({
-                    filename: file.filename, // Cloudinary public_id
+            req.files.map(async (file) => {
+                // Stream each buffer to Cloudinary
+                const result = await uploadToCloudinary(file.buffer, {
+                    public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, '')}`,
+                });
+                return Media.create({
+                    filename: result.public_id,
                     originalName: file.originalname,
-                    url: file.path, // Cloudinary secure URL
+                    url: result.secure_url,
                     type: getFileType(file.mimetype),
                     mimeType: file.mimetype,
                     size: file.size,
                     folder: req.body.folder || 'general',
                     uploadedBy: req.user._id
-                })
-            )
+                });
+            })
         );
 
         res.status(201).json(mediaItems);
     } catch (error) {
+        console.error('Multi-upload error:', error);
         res.status(500).json({ message: error.message });
     }
 });
