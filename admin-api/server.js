@@ -79,35 +79,29 @@ const seedAdmin = async () => {
     }
 };
 
-// ============ DYNAMIC ROUTES BASED ON MONGODB STATUS ============
+// ============ ROUTES (always registered, DB init handled by middleware) ============
+const authRoutes = require('./routes/auth');
+const publicRoutes = require('./routes/public');
+const categoryRoutes = require('./routes/categories');
+const productRoutes = require('./routes/products');
+const mediaRoutes = require('./routes/media');
+const enquiryRoutes = require('./routes/enquiries');
+const pageRoutes = require('./routes/pages');
+const descTemplateRoutes = require('./routes/description-templates');
+
+// Setup routes - called once DB is confirmed connected
 const setupRoutes = () => {
-    if (isMongoConnected) {
-        // Use MongoDB-based routes
-        const authRoutes = require('./routes/auth');
-        const publicRoutes = require('./routes/public');
-        const categoryRoutes = require('./routes/categories');
-        const productRoutes = require('./routes/products');
-        const mediaRoutes = require('./routes/media');
-        const enquiryRoutes = require('./routes/enquiries');
-        const pageRoutes = require('./routes/pages');
-        const descTemplateRoutes = require('./routes/description-templates');
-
-        app.use('/api/auth', authRoutes);
-        app.use('/api/public', publicRoutes);
-        app.use('/api/categories', protect, categoryRoutes);
-        app.use('/api/products', protect, productRoutes);
-        app.use('/api/media', protect, mediaRoutes);
-        app.use('/api/enquiries', protect, enquiryRoutes);
-        app.use('/api/pages', protect, pageRoutes);
-        app.use('/api/description-templates', protect, descTemplateRoutes);
-
-        console.log('📦 Using MongoDB routes');
-    } else {
-        // Demo mode routes
-        setupDemoRoutes();
-        console.log('📦 Using Demo mode routes');
-    }
+    app.use('/api/auth', authRoutes);
+    app.use('/api/public', publicRoutes);
+    app.use('/api/categories', protect, categoryRoutes);
+    app.use('/api/products', protect, productRoutes);
+    app.use('/api/media', protect, mediaRoutes);
+    app.use('/api/enquiries', protect, enquiryRoutes);
+    app.use('/api/pages', protect, pageRoutes);
+    app.use('/api/description-templates', protect, descTemplateRoutes);
+    console.log('📦 Routes registered with MongoDB');
 };
+
 
 // Demo mode routes (in-memory)
 const setupDemoRoutes = () => {
