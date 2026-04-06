@@ -94,17 +94,11 @@ const initialize = () => {
 
 // Middleware: MUST be the first thing to run to ensure DB is ready
 app.use(async (req, res, next) => {
-    // Avoid re-initializing for direct status checks if needed, 
-    // but generally we want to ensure DB is ready for all /api calls.
-    if (req.path.startsWith('/api')) {
-        try {
-            await initialize();
-            next();
-        } catch (err) {
-            next(err);
-        }
-    } else {
+    try {
+        await initialize();
         next();
+    } catch (err) {
+        next(err);
     }
 });
 
