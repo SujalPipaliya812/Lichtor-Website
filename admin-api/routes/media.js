@@ -14,12 +14,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Diagnostic logging
-console.log('--- Cloudinary Config Check ---');
-console.log('Cloud Name:', process.env.CLOUDINARY_CLOUD_NAME);
-console.log('API Key (first 4):', (process.env.CLOUDINARY_API_KEY || '').substring(0, 4));
-console.log('-------------------------------');
-
 // Use MEMORY storage — required for Vercel's read-only filesystem
 // Files are held in RAM as Buffer, then streamed directly to Cloudinary
 const storage = multer.memoryStorage();
