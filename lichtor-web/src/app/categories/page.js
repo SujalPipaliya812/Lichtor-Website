@@ -5,7 +5,7 @@ import Product from '@/lib/models/Product';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CategoriesClient from './CategoriesClient';
-import { API_URL } from '@/lib/constants';
+import { getImageUrl } from '@/lib/utils';
 
 // Fallback static categories used when DB has no data yet
 const fallbackCategories = [
@@ -35,8 +35,6 @@ async function getCategories() {
     try {
         await dbConnect();
 
-        // 🚀 OPTIMIZATION: Use MongoDB Aggregation to get counts and colors in ONE query
-        // This replaces the previous loop that did 3 queries per category (99+ total)
         const categoriesWithStats = await Category.aggregate([
             { $match: { isActive: true } },
             { $sort: { order: 1, name: 1 } },
@@ -105,11 +103,7 @@ async function getCategories() {
                 slug: cat.slug,
                 productSlug: cat.firstProductSlug || null,
                 desc: cat.description || fallback?.desc || '',
-                img: cat.bannerImage
-                    ? (cat.bannerImage.startsWith('/assets') 
-                        ? cat.bannerImage 
-                        : `${API_URL}${cat.bannerImage}`)
-                    : (fallback?.img || 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop'),
+                img: getImageUrl(cat.bannerImage || fallback?.img),
                 count: cat.productCount,
                 bodyColors: cat.allBodyColors || [],
                 tag: fallback?.tag || null,

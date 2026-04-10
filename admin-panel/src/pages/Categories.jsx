@@ -33,13 +33,19 @@ export default function Categories() {
         const file = e.target.files[0];
         if (!file) return;
 
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', 'categories');
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('folder', 'categories');
+        
+        // Auto-naming: Use category name as public ID
+        if (formData.name) {
+            const slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            fd.append('customPublicId', `categories/${slug}`);
+        }
 
         setUploading(true);
         try {
-            const res = await api.post('/media/upload', formData, {
+            const res = await api.post('/media/upload', fd, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -108,6 +114,15 @@ export default function Categories() {
         }
     };
 
+    const imgSrc = (url) => {
+        if (!url) return '';
+        // If it's a local asset from the main web project, point to the live site
+        if (url.startsWith('/assets')) {
+            return `https://lichtor.co.in${url}`;
+        }
+        return url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+    };
+
     return (
         <div className="page-container">
             <div className="page-header">
@@ -149,7 +164,7 @@ export default function Categories() {
                                         <td>
                                             {cat.bannerImage ? (
                                                 <img
-                                                    src={`${API_BASE_URL}${cat.bannerImage}`}
+                                                    src={imgSrc(cat.bannerImage)}
                                                     alt={cat.name}
                                                     style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }}
                                                 />
@@ -226,7 +241,7 @@ export default function Categories() {
                                     {formData.bannerImage && (
                                         <div style={{ marginTop: '10px' }}>
                                             <img
-                                                src={`${API_BASE_URL}${formData.bannerImage}`}
+                                                src={imgSrc(formData.bannerImage)}
                                                 alt="Preview"
                                                 style={{ height: '60px', borderRadius: '4px' }}
                                             />

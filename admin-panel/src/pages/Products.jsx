@@ -65,6 +65,13 @@ export default function Products() {
         const fd = new FormData();
         fd.append('file', file);
         fd.append('folder', 'products');
+        
+        // Auto-naming: Use product name as public ID
+        if (formData.name) {
+            const slug = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            fd.append('customPublicId', `products/${slug}`);
+        }
+
         setUploading(prev => ({ ...prev, [field]: true }));
         try {
             const res = await api.post('/media/upload', fd, {
@@ -84,16 +91,31 @@ export default function Products() {
         setUploading(prev => ({ ...prev, gallery: true }));
         try {
             const urls = [];
-            for (const file of files) {
+            const slug = formData.name ? formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+            
+            for (const [idx, file] of files.entries()) {
                 const fd = new FormData();
                 fd.append('file', file);
                 fd.append('folder', 'products');
+                if (slug) {
+                    fd.append('customPublicId', `products/${slug}-gallery-${Date.now()}-${idx}`);
+                }
+
                 const res = await api.post('/media/upload', fd, {
                     headers: { 'Content-Type': 'multipart/form-data' }
                 });
                 urls.push(res.data.url);
             }
-            setFormData(prev => ({ ...prev, gallery: [...prev.gallery, ...urls] }));
+            
+            setFormData(prev => {
+                const newState = { ...prev, gallery: [...prev.gallery, ...urls] };
+                // Automation: If main image is empty, set it to the first uploaded gallery image
+                if (!newState.image && urls.length > 0) {
+                    newState.image = urls[0];
+                    console.log('Automatically set thumbnail from gallery upload');
+                }
+                return newState;
+            });
         } catch {
             alert('Gallery upload failed');
         } finally {
@@ -257,7 +279,11 @@ export default function Products() {
 
     const imgSrc = (url) => {
         if (!url) return '';
-        return url.startsWith('http') || url.startsWith('/assets') ? url : `${API_BASE_URL}${url}`;
+        // If it's a local asset from the main web project, point to the live site
+        if (url.startsWith('/assets')) {
+            return `https://lichtor.co.in${url}`;
+        }
+        return url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
     };
 
     // ── RENDER ──

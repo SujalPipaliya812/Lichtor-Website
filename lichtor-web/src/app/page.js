@@ -160,7 +160,7 @@ export default function HomePage() {
             <div className="product-card">
               <div className="product-card-image">
                 <span className="product-card-badge">New</span>
-                <img src="https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=400&fit=crop" alt="LICHTOR Ultra Slim Panel Light" />
+                <img src="/assets/products/page_3.jpeg" alt="LICHTOR Ultra Slim Panel Light" />
               </div>
               <div className="product-card-content">
                 <span className="product-card-category">Panel Lights</span>
@@ -176,7 +176,7 @@ export default function HomePage() {
             </div>
             <div className="product-card">
               <div className="product-card-image">
-                <img src="https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&h=400&fit=crop" alt="LICHTOR COB Downlighter" />
+                <img src="/assets/products/page_20.jpeg" alt="LICHTOR COB Downlighter" />
               </div>
               <div className="product-card-content">
                 <span className="product-card-category">Downlighters</span>
@@ -193,7 +193,7 @@ export default function HomePage() {
             <div className="product-card">
               <div className="product-card-image">
                 <span className="product-card-badge">Popular</span>
-                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop" alt="LICHTOR LED Batten" />
+                <img src="/assets/products/page_12.jpeg" alt="LICHTOR LED Batten" />
               </div>
               <div className="product-card-content">
                 <span className="product-card-category">Tube Lights</span>
@@ -209,7 +209,7 @@ export default function HomePage() {
             </div>
             <div className="product-card">
               <div className="product-card-image">
-                <img src="https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400&h=400&fit=crop" alt="LICHTOR Street Light" />
+                <img src="/assets/products/page_23.jpeg" alt="LICHTOR Street Light" />
               </div>
               <div className="product-card-content">
                 <span className="product-card-category">Street Lights</span>

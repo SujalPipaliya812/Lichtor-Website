@@ -97,8 +97,9 @@ router.post('/upload', protect, authorize('admin', 'editor'), upload.single('fil
         }
 
         // Stream the buffer directly to Cloudinary (works on Vercel serverless)
+        const customPublicId = req.body.customPublicId;
         const cloudinaryResult = await uploadToCloudinary(req.file.buffer, {
-            public_id: `${Date.now()}-${req.file.originalname.replace(/\.[^/.]+$/, '')}`,
+            public_id: customPublicId || `${Date.now()}-${req.file.originalname.replace(/\.[^/.]+$/, '')}`,
         });
 
         const media = await Media.create({
@@ -130,10 +131,14 @@ router.post('/upload-multiple', protect, authorize('admin', 'editor'), upload.ar
         }
 
         const mediaItems = await Promise.all(
-            req.files.map(async (file) => {
+            req.files.map(async (file, index) => {
                 // Stream each buffer to Cloudinary
+                const customPublicId = req.body.customPublicId 
+                    ? `${req.body.customPublicId}-${index + 1}` 
+                    : `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, '')}`;
+
                 const result = await uploadToCloudinary(file.buffer, {
-                    public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, '')}`,
+                    public_id: customPublicId,
                 });
                 return Media.create({
                     filename: result.public_id,

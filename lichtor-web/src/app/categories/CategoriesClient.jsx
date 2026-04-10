@@ -123,7 +123,10 @@ export default function CategoriesClient({ categories, isFromDB }) {
                                         alt={cat.name}
                                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         onError={(e) => {
-                                            e.target.src = 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&h=300&fit=crop';
+                                            // Fallback to a generic placeholder if image fails to load
+                                            e.target.src = '/Lichtor-01.png'; // Use logo as fallback
+                                            e.target.style.padding = '20px';
+                                            e.target.style.objectFit = 'contain';
                                         }}
                                     />
                                 </div>

@@ -5,6 +5,7 @@ import Category from '@/lib/models/Category';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { API_URL } from '@/lib/constants';
+import { getImageUrl } from '@/lib/utils';
 
 const staticData = {
     'panel-lights': {

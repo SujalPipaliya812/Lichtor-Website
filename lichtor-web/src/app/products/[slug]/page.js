@@ -5,6 +5,7 @@ import Category from '@/lib/models/Category';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { API_URL } from '@/lib/constants';
+import { getImageUrl } from '@/lib/utils';
 import ProductGallery from './ProductGallery';
 import ProductOptions from './ProductOptions';
 
@@ -126,7 +127,7 @@ export default async function ProductDetailPage({ params }) {
                          <ProductGallery 
                             images={
                                 (product.gallery?.length > 0 ? product.gallery : product.images?.length > 0 ? product.images : (product.image ? [product.image] : [])).map(img => 
-                                    img.startsWith('http') || img.startsWith('/assets') ? img : `${API_URL}${img}`
+                                    getImageUrl(img)
                                 )
                             } 
                             name={product.name} 
