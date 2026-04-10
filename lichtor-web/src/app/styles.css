@@ -3801,3 +3801,49 @@ h6 {
   from { opacity: 0; transform: translateY(-40px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* --- Force Mobile Stacking (Added for Specificity) --- */
+@media (max-width: 768px) {
+  .product-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-8) !important;
+  }
+
+  .product-gallery {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin-bottom: var(--space-6) !important;
+  }
+
+  .product-thumbnails {
+    order: 2 !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    padding: var(--space-2) 0 !important;
+    gap: 8px !important;
+  }
+
+  .product-thumb {
+    width: 70px !important;
+    height: 70px !important;
+    flex: 0 0 70px !important;
+  }
+
+  .product-main-image {
+    order: 1 !important;
+    width: 100% !important;
+    aspect-ratio: 1/1 !important;
+  }
+
+  .product-details {
+    width: 100% !important;
+  }
+  
+  .logo {
+    transform: scale(1.5) !important;
+    margin-right: 20px !important;
+  }
+}
