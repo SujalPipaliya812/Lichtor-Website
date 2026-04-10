@@ -3847,3 +3847,39 @@ h6 {
     margin-right: 20px !important;
   }
 }
+
+/* --- Mobile Menu Drawer Bug Fixes --- */
+@media (max-width: 768px) {
+  .mobile-menu-header {
+    height: 60px !important;
+    padding: 0 var(--space-6) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background: var(--white);
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .mobile-menu-header .logo {
+    transform: scale(2.2) !important;
+    transform-origin: left center !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    height: 100% !important;
+  }
+  
+  .mobile-menu-header .logo img {
+    max-height: 24px !important;
+    width: auto !important;
+  }
+
+  .close-menu-btn {
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+}

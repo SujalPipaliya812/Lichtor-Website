@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }) {
                     _id: { $in: product.similarProducts },
                     isActive: true
                 }).populate('category').lean();
-                similarProducts = JSON.parse(JSON.stringify(adminSimilar));
+                similarProducts = JSON.parse(JSON.stringify(adminSimilar)).slice(0, 4);
             } else {
                 // Fallback: auto-fetch by category group
                 const currentGroup = product.category?.productGroup;
@@ -74,7 +74,7 @@ export default async function ProductDetailPage({ params }) {
                         category: { $in: catIds },
                         _id: { $ne: product._id },
                         isActive: true,
-                    }).populate('category').limit(8).lean();
+                    }).populate('category').limit(4).lean();
                     similarProducts = JSON.parse(JSON.stringify(rawSimilar));
                 }
             }
